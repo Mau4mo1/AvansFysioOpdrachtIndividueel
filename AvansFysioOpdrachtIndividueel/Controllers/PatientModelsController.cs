@@ -50,7 +50,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         // POST: PatientModels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("PatientNumber,DateOfBirth,Gender,Id,Name,Email")] PatientModel patientModel)
+        public IActionResult Create([Bind("PatientNumber,DateOfBirth,Gender,Name,Email")] PatientModel patientModel)
         {
             if (ModelState.IsValid)
             {

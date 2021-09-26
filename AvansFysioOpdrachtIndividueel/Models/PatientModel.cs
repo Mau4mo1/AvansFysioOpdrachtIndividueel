@@ -21,6 +21,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
             DateOfBirth = dateOfBirth;
             Gender = gender;
         }
+
         //public PatientModel(int patientNumber, DateTime dateOfBirth, string gender, string name, string email) : base(name, email)
         //{
         //    PatientNumber = patientNumber;
