@@ -5,31 +5,32 @@
 <div class="text-center">
     <h1>Welcome, log in to see more detailed information!</h1>
 
-    <a asp-action="AddPatient">Add a patient</a>
+    <a asp-controller="PatientModels" asp-action="Create" >Add a patient</a>
 
-    <h1>Patient overview:</h1> 
+    <h1>Patient overview:</h1>
     <table class="table">
         <thead>
             <tr>
+                <th scope="col">Id</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">DateOfBirth</th>
                 <th scope="col">Gender</th>
+                <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
-            
-                @foreach (PatientModel patient in (dynamic) Model.PatientModels)
-                {
-                    <tr>
+            @foreach (PatientModel patient in (dynamic)Model.PatientModels)
+            {
+                <tr>
+                    <td><a asp-action="PatientDetail" asp-route-id="@patient.Id">@patient.Id</a></td>
                     <td>@patient.Name</td>
                     <td>@patient.Email</td>
                     <td>@patient.DateOfBirth</td>
                     <td>@patient.Gender</td>
-                    </tr>
-                }
-            
+                    <td><a asp-action="DeletePatient" asp-route-id="@patient.Id" >Delete</a> </td>
+            </tr>
+            }
         </tbody>
     </table>
 </div>
-    

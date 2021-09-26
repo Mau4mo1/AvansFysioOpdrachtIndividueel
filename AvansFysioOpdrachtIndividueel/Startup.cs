@@ -10,6 +10,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AvansFysioOpdrachtIndividueel.Data;
 using AvansFysioOpdrachtIndividueel.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace AvansFysioOpdrachtIndividueel
 {
@@ -17,8 +20,6 @@ namespace AvansFysioOpdrachtIndividueel
     {
         public Startup(IConfiguration configuration)
         {
-            LocalPatientRepo local = new LocalPatientRepo();
-            local.Create(new PatientModel(132131, new DateTime(2001, 8, 24), "Man", 1,"Maurice", "Mauricederidder@outlook.com"));
             Configuration = configuration;
         }
 
@@ -27,9 +28,24 @@ namespace AvansFysioOpdrachtIndividueel
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Standard stuff
             services.AddControllersWithViews();
-            services.AddScoped<IRepo<PatientModel>, LocalPatientRepo>();
+            // Dependency Injection
+            services.AddDbContext<FysioDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            services.AddScoped<IRepo<PatientModel>, SQLPatientRepo>();
             services.AddScoped<IDao, SQLDao>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // Authorization
+            services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth", config =>
+                {
+                    config.Cookie.Name = "Login.Cookie";
+                    config.LoginPath = "/Home/Authenticate";
+                });
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<FysioDBContext>()
+                .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,9 +64,14 @@ namespace AvansFysioOpdrachtIndividueel
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+
+
             app.UseRouting();
+            
+            app.UseAuthentication();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

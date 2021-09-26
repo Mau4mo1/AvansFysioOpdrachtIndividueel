@@ -13,6 +13,12 @@ namespace AvansFysioOpdrachtIndividueel.Models
         public PatientModel Get(int id) => (from patient in Patients
                                             where patient.Id == id
                                             select patient).First();
+
+        public PatientModel Get(PatientModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove(int id) => Patients.Remove(Get(id));
         public void Update(PatientModel entity, int id)
         {

@@ -15,12 +15,18 @@ namespace AvansFysioOpdrachtIndividueel.Models
         {
 
         }
-        public PatientModel(int patientNumber, DateTime dateOfBirth, string gender, int id, string name, string email) : base(id, name, email)
+        public PatientModel(int patientNumber, DateTime dateOfBirth, string gender, string name, string email) : base( name, email)
         {
             PatientNumber = patientNumber;
             DateOfBirth = dateOfBirth;
             Gender = gender;
         }
-        
+        //public PatientModel(int patientNumber, DateTime dateOfBirth, string gender, string name, string email) : base(name, email)
+        //{
+        //    PatientNumber = patientNumber;
+        //    DateOfBirth = dateOfBirth;
+        //    Gender = gender;
+        //}
+
     }
 }

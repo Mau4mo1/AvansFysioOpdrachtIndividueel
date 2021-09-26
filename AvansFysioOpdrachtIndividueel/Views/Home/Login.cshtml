@@ -1,16 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
-@model PersonViewModel
-<div class="text-center">
-    <h1>Welcome, log in to see more detailed information!</h1>
-
-    <a asp-action="AddPatient">Add a patient</a>
-
-    <h1>Patient overview:</h1> 
-    
-    <form asp-action="AddPatient" method="post">
+@*
+<h1>Login</h1> 
+<form asp-action="AddPatient" method="post">
         <div asp-validation-summary="All"></div>
         <div class="form-group">
             <label asp-for="Name">Jouw naam:</label>
@@ -41,13 +34,6 @@
             <label asp-for="Id">ID:</label>
             <input class="form-control" asp-for="Id" />
         </div>
-        <div class="form-group">
-            <label asp-for="Password">Password:</label>
-            <input class="form-control" asp-for="Password" />
-        </div>
 
         <button class="btn btn-primary" type="submit">Client toevoegen</button>
-    </form>
-    
-</div>
-    
+    </form>*@
