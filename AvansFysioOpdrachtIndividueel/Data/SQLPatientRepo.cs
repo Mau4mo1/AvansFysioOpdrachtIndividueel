@@ -22,17 +22,14 @@ namespace AvansFysioOpdrachtIndividueel.Data
             _context.Add(entity);
             _context.SaveChanges();
         }
-
         public List<PatientModel> Get()
         {
             return _context.patients.ToList();
         }
-
         public PatientModel Get(int id)
         {
             return _context.patients.Find(id);
         }
-
         public PatientModel Get(PatientModel entity)
         {
             return _context.patients.Find(entity.Id);
@@ -42,7 +39,6 @@ namespace AvansFysioOpdrachtIndividueel.Data
             _context.Remove(_context.patients.Find(id));
             _context.SaveChanges();
         }
-
         public void Update(PatientModel entity, int id)
         {
             throw new NotImplementedException();

@@ -7,5 +7,6 @@ namespace AvansFysioOpdrachtIndividueel.Data
 {
     public class SQLDao : IDao
     {
+
     }
 }

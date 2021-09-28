@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AvansFysioOpdrachtIndividueel.Migrations
 {
     [DbContext(typeof(FysioDBContext))]
-    [Migration("20210922111739_InitialCreate")]
+    [Migration("20210928113804_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,9 +49,6 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.Property<string>("MyProperty")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PatientId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("PlannedDate")
                         .HasColumnType("datetime2");
 
@@ -63,8 +60,6 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.HasIndex("IntakeDoneById");
 
                     b.HasIndex("IntakeSupervisedById");
-
-                    b.HasIndex("PatientId");
 
                     b.HasIndex("TherapistId");
 
@@ -79,14 +74,18 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Person");
+                    b.ToTable("PatientDossier");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>
@@ -99,8 +98,13 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PatientDossierId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PatientNumber")
                         .HasColumnType("int");
+
+                    b.HasIndex("PatientDossierId");
 
                     b.ToTable("Patient");
                 });
@@ -115,10 +119,6 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                         .WithMany()
                         .HasForeignKey("IntakeSupervisedById");
 
-                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PatientModel", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
-
                     b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", "Therapist")
                         .WithMany()
                         .HasForeignKey("TherapistId");
@@ -126,8 +126,6 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.Navigation("IntakeDoneBy");
 
                     b.Navigation("IntakeSupervisedBy");
-
-                    b.Navigation("Patient");
 
                     b.Navigation("Therapist");
                 });
@@ -139,6 +137,12 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                         .HasForeignKey("AvansFysioOpdrachtIndividueel.Models.PatientModel", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
+
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", "PatientDossier")
+                        .WithMany()
+                        .HasForeignKey("PatientDossierId");
+
+                    b.Navigation("PatientDossier");
                 });
 #pragma warning restore 612, 618
         }

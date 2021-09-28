@@ -8,7 +8,6 @@ namespace AvansFysioOpdrachtIndividueel.Models
     public class PatientDossierModel
     {
         public int Id { get; set; }
-        public PatientModel Patient { get; set; }
         // This is the global description of the issue at hand
         public string IssueDescription { get; set; }
         // Diagnosis code and description
