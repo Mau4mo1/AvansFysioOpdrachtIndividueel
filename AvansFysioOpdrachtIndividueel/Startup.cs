@@ -33,7 +33,6 @@ namespace AvansFysioOpdrachtIndividueel
             // Dependency Injection
             services.AddDbContext<FysioDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddScoped<IRepo<PatientModel>, SQLPatientRepo>();
-            services.AddScoped<IDao, SQLDao>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // Authorization
             services.AddAuthentication("CookieAuth")
@@ -69,7 +68,6 @@ namespace AvansFysioOpdrachtIndividueel
             app.UseRouting();
             
             app.UseAuthentication();
-
             app.UseAuthorization();
 
 

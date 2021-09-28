@@ -1,4 +1,5 @@
 ﻿using AvansFysioOpdrachtIndividueel.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,11 @@ namespace AvansFysioOpdrachtIndividueel.Data
         }
         public PatientModel Get(int id)
         {
-            return _context.patients.Find(id);
+            // TODO CLEAN?
+            var patient = _context.patients
+                .Include(patient => patient.PatientDossier).First();
+           
+            return patient;
         }
         public PatientModel Get(PatientModel entity)
         {
@@ -41,7 +46,12 @@ namespace AvansFysioOpdrachtIndividueel.Data
         }
         public void Update(PatientModel entity, int id)
         {
-            throw new NotImplementedException();
+            PatientModel model = Get(id);
+            model.PatientDossier = entity.PatientDossier;
+
+            _context.Update(model);
+            _context.SaveChanges();
         }
+
     }
 }

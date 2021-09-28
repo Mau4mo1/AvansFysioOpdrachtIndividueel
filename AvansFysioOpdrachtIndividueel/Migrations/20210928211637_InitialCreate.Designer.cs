@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AvansFysioOpdrachtIndividueel.Migrations
 {
     [DbContext(typeof(FysioDBContext))]
-    [Migration("20210928113804_InitialCreate")]
+    [Migration("20210928211637_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,9 +46,6 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.Property<string>("IssueDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MyProperty")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("PlannedDate")
                         .HasColumnType("datetime2");
 
@@ -63,7 +60,7 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
 
                     b.HasIndex("TherapistId");
 
-                    b.ToTable("patientDossiers");
+                    b.ToTable("PatientDossierModel");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PersonModel", b =>
@@ -85,7 +82,7 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PatientDossier");
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>

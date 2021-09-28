@@ -13,27 +13,29 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
     public class PatientModelsController : Controller
     {
         private readonly FysioDBContext _context;
-        private readonly IRepo<PatientModel> _repo;
+        private readonly IRepo<PatientModel> _patientRepo;
+
         public PatientModelsController(FysioDBContext context, IRepo<PatientModel> repo)
         {
             _context = context;
-            _repo = repo;
+            _patientRepo = repo;
         }
 
         // GET: PatientModels
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.patients.ToListAsync());
+            return View(_patientRepo.Get().ToList());
         }
         // GET: PatientModels/Details/5
         public IActionResult Details(int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return NotFound();
             }
-            var patientModel = _repo.Get(id);
-
+            PatientDossierViewModel patientModel = new PatientDossierViewModel();
+            patientModel.PatientModel = _patientRepo.Get(id);
+            patientModel.SelectItems = _patientRepo.Get();
             if (patientModel == null)
             {
                 return NotFound();
@@ -54,7 +56,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repo.Create(patientModel);
+                _patientRepo.Create(patientModel);
                 return RedirectToAction(nameof(Index));
             }
             return View(patientModel);
@@ -68,7 +70,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 return NotFound();
             }
 
-            var patientModel = _repo.Get(id);
+            var patientModel = _patientRepo.Get(id);
 
             if (patientModel == null)
             {
@@ -141,6 +143,20 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         private bool PatientModelExists(int id)
         {
             return _context.patients.Any(e => e.Id == id);
+        }
+
+        public IActionResult AddDossier(PatientDossierViewModel model, int id)
+        {
+            PatientModel patientModel = _patientRepo.Get(id);
+
+            patientModel.PatientDossier = model.PatientModel.PatientDossier;
+
+            patientModel.PatientDossier.IntakeDoneBy = _patientRepo.Get(model.IntakeDoneById);
+            patientModel.PatientDossier.IntakeSupervisedBy = _patientRepo.Get(model.SupervisedById);
+            patientModel.PatientDossier.Therapist = _patientRepo.Get(model.TherapistId);
+
+            _patientRepo.Update(patientModel, id);
+            return RedirectToAction("Details", new { id = id });
         }
     }
 }

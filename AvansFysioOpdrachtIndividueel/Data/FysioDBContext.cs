@@ -10,7 +10,7 @@ namespace AvansFysioOpdrachtIndividueel.Data
         
         public DbSet<PatientModel> patients { get; set; }
         public DbSet<PersonModel> persons { get; set; }
-        public DbSet<PatientDossierModel> patientDossiers { get; set; }
+        //public DbSet<PatientDossierModel> patientDossiers { get; set; }
        
         public FysioDBContext()
         {
@@ -26,7 +26,7 @@ namespace AvansFysioOpdrachtIndividueel.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<PatientModel>().ToTable("Patient");
             modelBuilder.Entity<PersonModel>().ToTable("Person");
-            modelBuilder.Entity<PersonModel>().ToTable("PatientDossier");
+            //modelBuilder.Entity<PersonModel>().ToTable("PatientDossier");
         }
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

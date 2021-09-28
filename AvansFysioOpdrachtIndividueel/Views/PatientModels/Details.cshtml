@@ -1,11 +1,11 @@
-﻿@model AvansFysioOpdrachtIndividueel.Models.PatientModel
+﻿@model AvansFysioOpdrachtIndividueel.Models.PatientDossierViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
 <div>
-    <h1>@Model.Name's  overview:</h1>
+    <h1>@Model.PatientModel.Name's  overview:</h1>
     <table class="table">
         <thead>
             <tr>
@@ -17,15 +17,15 @@
         </thead>
         <tbody>
             <tr>
-                <td>@Model.Name</td>
-                <td>@Model.Email</td>
-                <td>@Model.DateOfBirth</td>
-                <td>@Model.Gender</td>
+                <td>@Model.PatientModel.Name</td>
+                <td>@Model.PatientModel.Email</td>
+                <td>@Model.PatientModel.DateOfBirth</td>
+                <td>@Model.PatientModel.Gender</td>
             </tr>
         </tbody>
     </table>
 
-    @if (Model.PatientDossier == null)
+    @if (Model.PatientModel.PatientDossier == null)
     {
         <h2>Hier komen patienten dossier's</h2>
     }
@@ -42,61 +42,66 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>@Model.PatientDossier.DiagnosisCode</td>
+                    <td>@Model.PatientModel.PatientDossier.DiagnosisCode</td>
                 </tr>
             </tbody>
         </table>
     }
-      @*public int Id { get; set; }
-        // This is the global description of the issue at hand
-        public string IssueDescription { get; set; }
-        // Diagnosis code and description
-        public string DiagnosisCode { get; set; }
-        // This is the person that has done the intake for the patient
-        public PersonModel IntakeDoneBy { get; set; }
-        // This is who supervised the intake
-        public PersonModel IntakeSupervisedBy { get; set; }
-        // Therapist is the person that helps this patient
-        public PersonModel Therapist { get; set; }
-        // When will the patient get helped?
-        public DateTime PlannedDate { get; set; }
-        // Until when will the patient get helped?
-        public DateTime DueDate {  get; set;}
-        // Extra comments to add by the therapist
-        public string ExtraComments { get; set;}
-        // Treatment plan
-        public String MyProperty { get; set; }*@
-    <form asp-action="Create" method="post">
+    <form asp-action="AddDossier" asp-route-id="@Model.PatientModel.Id" method="post">
         <div asp-validation-summary="All"></div>
         <div class="form-group">
-            <label asp-for="@Model.PatientDossier.DiagnosisCode">Jouw naam:</label>
-            <input class="form-control" asp-for="Name" />
+            <label asp-for="@Model.PatientModel.PatientDossier.IssueDescription">Het probleem:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.IssueDescription" />
         </div>
 
         <div class="form-group">
-            <label asp-for="Email">Jouw Email:</label>
-            <input class="form-control" asp-for="Email" />
+            <label asp-for="@Model.PatientModel.PatientDossier.DiagnosisCode">Diagnose code:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.DiagnosisCode" />
         </div>
 
         <div class="form-group">
-            <label asp-for="DateOfBirth">Jouw geboortedatum:</label>
-            <input class="form-control" asp-for="DateOfBirth" />
+            <label asp-for="@Model.IntakeDoneById">Intake gedaan door:</label>
+            <select asp-for="@Model.IntakeDoneById"
+                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
+                <option>Selecteer een optie</option>
+            </select>
         </div>
 
         <div class="form-group">
-            <label asp-for="PatientNumber">Patientnummer::</label>
-            <input class="form-control" asp-for="PatientNumber" />
+            <label asp-for="@Model.SupervisedById">Intake gesupervised door:</label>
+            <select asp-for="@Model.SupervisedById"
+                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
+                <option>Selecteer een optie</option>
+            </select>
         </div>
 
         <div class="form-group">
-            <label asp-for="Gender">Geslacht:</label>
-            <input class="form-control" asp-for="Gender" />
+            <label asp-for="@Model.PatientModel.PatientDossier.PlannedDate">Wie gaat de therapie uitvoeren:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.PlannedDate" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.PatientModel.PatientDossier.DueDate">Tot wanneer krijgt @Model.PatientModel.Name hulp:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.DueDate" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.TherapistId">Wie gaat de therapie uitvoeren:</label>
+            <select asp-for="@Model.TherapistId"
+                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
+                <option>Selecteer een optie</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.PatientModel.PatientDossier.ExtraComments">Extra toevoegingen:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.ExtraComments" />
         </div>
 
         <button class="btn btn-primary" type="submit">Client toevoegen</button>
     </form>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.PatientModel.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
