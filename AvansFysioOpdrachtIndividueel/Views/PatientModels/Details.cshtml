@@ -31,17 +31,21 @@
     }
     else
     {
-        <table>
+        <h2>Patienten dossier van @Model.PatientModel.Name</h2>
+        <table class="table">
             <thead>
                 <tr>
+                    <th>PlannedDate</th>
+                    <th>Therapist</th>
+                    <th>ExtraComments</th>
                     <th>Diagnose code</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <td>@Model.PatientModel.PatientDossier.PlannedDate</td>
+                    <td>@Model.PatientModel.PatientDossier.Therapist.Name</td>
+                    <td>@Model.PatientModel.PatientDossier.ExtraComments</td>
                     <td>@Model.PatientModel.PatientDossier.DiagnosisCode</td>
                 </tr>
             </tbody>
