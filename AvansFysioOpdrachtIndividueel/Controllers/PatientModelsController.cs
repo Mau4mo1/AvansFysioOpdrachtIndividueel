@@ -33,7 +33,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 return NotFound();
             }
-            PatientDossierViewModel patientModel = new PatientDossierViewModel();
+            PatientDossierViewModel patientModel = new();
             patientModel.PatientModel = _patientRepo.Get(id);
             patientModel.SelectItems = _patientRepo.Get();
             if (patientModel == null)
@@ -183,7 +183,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             patientModel.PatientDossier.Therapist = _patientRepo.Get(model.TherapistId);
 
             _patientRepo.Update(patientModel, id);
-            return RedirectToAction("Details", new { id = id });
+            return RedirectToAction("Details", new { id });
         }
         public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         {
@@ -192,12 +192,13 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 patientModel.PatientDossier.Treatments = new List<TreatmentModel>();
             }
+            model.TreatmentModel.TreatmentDoneBy = _patientRepo.Get(model.TreatmentDoneById);
             patientModel.PatientDossier.Treatments.Add(model.TreatmentModel);
 
             _patientRepo.Update(patientModel, id);
 
             // TODO:: find out if there is a better way to do this
-            return RedirectToAction("Details", new { id = id });
+            return RedirectToAction("Details", new { id });
         }
     }
 }

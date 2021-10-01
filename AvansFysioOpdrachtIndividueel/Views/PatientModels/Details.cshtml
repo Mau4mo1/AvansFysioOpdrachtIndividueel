@@ -25,11 +25,7 @@
         </tbody>
     </table>
 
-    @if (Model.PatientModel.PatientDossier == null)
-    {
-        <h2>Hier komen patienten dossier's</h2>
-    }
-    else
+    @if (Model.PatientModel.PatientDossier != null)
     {
         <h2>Patienten dossier van @Model.PatientModel.Name</h2>
         <table class="table">
@@ -50,7 +46,80 @@
                 </tr>
             </tbody>
         </table>
+
     }
+    else
+    {
+        <h2>Hier komen patienten dossier's</h2>
+    }
+
+    @if (Model.PatientModel.PatientDossier.Treatments.Count > 0)
+    {
+        <h2>Patienten dossier van @Model.PatientModel.Name</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Complications</th>
+                    <th>TreatmentRoomOrTrainingRoom</th>
+                    <th>TreatmentTime</th>
+                    <th>Description</th>
+                    <th>Id</th>
+                    <th>VektisType</th>
+                    <th>Behandeling gedaan door</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var treatment in Model.PatientModel.PatientDossier.Treatments)
+                {
+                    <tr>
+                        <td>@treatment.Complications</td>
+                        <td>@treatment.TreatmentRoomOrTrainingRoom</td>
+                        <td>@treatment.TreatmentTime</td>
+                        <td>@treatment.Description</td>
+                        <td>@treatment.Id</td>
+                        <td>@treatment.VektisType</td>
+                        <td>@treatment.TreatmentDoneBy.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h2>Hier komen patient behandelingen</h2>
+    }
+    <form asp-action="AddTreatment" asp-route-id="@Model.PatientModel.Id" method="post">
+        <div asp-validation-summary="All"></div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentModel.VektisType">Vektis Type:</label>
+            <input class="form-control" asp-for="@Model.TreatmentModel.VektisType" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentModel.Description">Beschrijving:</label>
+            <input class="form-control" asp-for="@Model.TreatmentModel.Description" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentDoneById">Behandeling wordt gedaan door:</label>
+            <select asp-for="@Model.TreatmentDoneById"
+                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
+                <option>Selecteer een optie</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentModel.TreatmentTime">Wanneer vind de behandeling plaats:</label>
+            <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentTime" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom">Is het een behandelkamer?</label>
+            <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.TreatmentModel.Complications">Zijn er nog extra complicaties:</label>
+            <input class="form-control" asp-for="@Model.TreatmentModel.Complications" />
+        </div>
+        <button class="btn btn-primary" type="submit">Client toevoegen</button>
+    </form>
+
     <form asp-action="AddDossier" asp-route-id="@Model.PatientModel.Id" method="post">
         <div asp-validation-summary="All"></div>
         <div class="form-group">

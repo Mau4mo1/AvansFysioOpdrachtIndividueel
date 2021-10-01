@@ -13,6 +13,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
         public int SupervisedById { get; set; }
         public int IntakeDoneById { get; set; }
         public int TherapistId { get; set; }
+        public int TreatmentDoneById { get;set; } 
         public List<TreatmentModel> TreatmentModels {  get; set; }
         public TreatmentModel TreatmentModel { get; set; }
         public PatientDossierViewModel()

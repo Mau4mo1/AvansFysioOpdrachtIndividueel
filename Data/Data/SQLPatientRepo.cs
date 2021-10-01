@@ -9,7 +9,7 @@ namespace AvansFysioOpdrachtIndividueel.Data
 {
     public class SQLPatientRepo : IRepo<PatientModel>
     {
-        FysioDBContext _context = new FysioDBContext();
+        FysioDBContext _context = new();
         public SQLPatientRepo(FysioDBContext context)
         {
             _context = context;
