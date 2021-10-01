@@ -29,10 +29,24 @@ namespace AvansFysioOpdrachtIndividueel.Data
         }
         public PatientModel Get(int id)
         {
-            // TODO CLEAN?
-            var patient = _context.patients
-                .Include(patient => patient.PatientDossier).First();
-           
+            var patient = _context.patients.Where(x => x.Id == id)
+                .Include(patient => patient.PatientDossier)
+                    .ThenInclude(patient => patient.Treatments)
+                        .ThenInclude(patient => patient.TreatmentDoneBy)
+                .Include(patient => patient.PatientDossier.Therapist)
+                .Include(patient => patient.PatientDossier.IntakeSupervisedBy)
+                .First();
+
+            if (patient.PatientDossier == null)
+            {
+                patient.PatientDossier = new PatientDossierModel();
+            }
+            if (patient.PatientDossier.Treatments == null)
+            {
+                patient.PatientDossier.Treatments = new List<TreatmentModel>();
+            }
+
+
             return patient;
         }
         public PatientModel Get(PatientModel entity)
