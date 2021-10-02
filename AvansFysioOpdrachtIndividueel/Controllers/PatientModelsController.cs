@@ -155,7 +155,6 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
         public IActionResult AddDossier(PatientDossierViewModel model, int id)
         {
-
             PatientModel patientModel = _patientRepo.Get(id);
             //patientModel.PatientDossier 
             patientModel.PatientDossier.DueDate = model.PatientModel.PatientDossier.DueDate;
