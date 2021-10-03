@@ -13,6 +13,8 @@ using AvansFysioOpdrachtIndividueel.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AvansFysioOpdrachtIndividueel
 {
@@ -35,6 +37,7 @@ namespace AvansFysioOpdrachtIndividueel
             services.AddScoped<IRepo<PatientModel>, SQLPatientRepo>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // Authorization
+            services.AddDbContext<UserDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("User")));
             services.AddAuthentication("CookieAuth")
                 .AddCookie("CookieAuth", config =>
                 {
@@ -42,9 +45,29 @@ namespace AvansFysioOpdrachtIndividueel
                     config.LoginPath = "/Home/Authenticate";
                 });
 
+            services.AddAuthorization(config =>
+            {
+                var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                var defaultAuthPolicy = defaultAuthBuilder
+                .RequireAuthenticatedUser()
+                .Build();
+
+                config.AddPolicy("RequireFysiotherapistRole",
+                    policy => policy.RequireRole("Fysiotherapist"));
+                config.AddPolicy("RequirePatientRole",
+                    policy => policy.RequireRole("Patient"));
+
+                config.DefaultPolicy = defaultAuthPolicy;
+            });
+
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<FysioDBContext>()
+                .AddEntityFrameworkStores<UserDBContext>()
                 .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "Identity.Cookie";
+                config.LoginPath = "/Home/Login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

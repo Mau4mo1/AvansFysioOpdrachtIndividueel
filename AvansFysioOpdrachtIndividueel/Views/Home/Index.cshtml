@@ -3,7 +3,15 @@
 }
 @model PersonViewModelLists
 <div class="text-center">
-    <h1>Welcome, log in to see more detailed information!</h1>
+    @if(!User.Identity.IsAuthenticated)
+    {
+            <h1>Welcome, log in to see more detailed information!</h1>
+    }
+    else
+    {
+        <h1>Welcome, @User.Identity.Name!</h1>
+    }
+
 
     <a asp-controller="PatientModels" asp-action="Create">Add a patient</a>
 

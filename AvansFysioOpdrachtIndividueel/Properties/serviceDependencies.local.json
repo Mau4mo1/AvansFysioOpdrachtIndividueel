@@ -4,6 +4,11 @@
       "secretStore": null,
       "type": "mssql.onprem",
       "connectionId": "ConnectionStrings"
+    },
+    "mssql2": {
+      "secretStore": null,
+      "type": "mssql.local",
+      "connectionId": "ConnectionStringsUser"
     }
   }
 }

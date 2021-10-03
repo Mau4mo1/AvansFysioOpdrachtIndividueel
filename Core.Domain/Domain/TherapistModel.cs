@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace AvansFysioOpdrachtIndividueel.Models
 {
-    public class TherapistModel
+    public abstract class TherapistModel
     {
+        public int BIG { get; set; }
     }
 }

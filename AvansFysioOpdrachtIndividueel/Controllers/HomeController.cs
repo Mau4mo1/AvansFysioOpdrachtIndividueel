@@ -45,6 +45,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             // Doe een data verzoek naar een Repository en vul de model
             personViewModel.PatientModels = _patientRepo.Get();
             // Roep view aan en stuur data door naar view
+            ViewBag.User = _userManager.GetUserAsync(this.User);
+
             return View(personViewModel);
         }
 
@@ -74,38 +76,67 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         }
         #endregion
         #region Authentication
-        public IActionResult Authenticate()
-        {
-            var cookieClaims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name, "Maurice"),
-                new Claim(ClaimTypes.Email, "mauricederidder@outlook.com"),
-                new Claim("Login.Says", "Allowed to pass"),
-            };
-
-            var userIdentity = new ClaimsIdentity(cookieClaims, "Login");
-
-            var userPrincipal = new ClaimsPrincipal(userIdentity);
-
-            HttpContext.SignInAsync(userPrincipal);
-
-            return RedirectToAction("Index");
-        }
-        public IActionResult Login(string userName, string password)
-        {
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Register(string userName, string password)
-        {
-
-            return RedirectToAction("Index");
-        }
-
-        [Authorize]
-        public IActionResult Secret()
+        public IActionResult Login()
         {
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Login(string userName, string password)
+        {
+            // TODO:: Find better way
+
+
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user != null)
+            {
+                // sign in
+                var signInResult = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+
+                if (signInResult.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(string userName, string password)
+        {
+            var user = new IdentityUser()
+            {
+                UserName = userName
+            };
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                // sign in
+                var signInResult = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+
+                if (signInResult.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        }
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index");
+        }
+
+        //  [Authorize(Roles = "Patient")]
+        public IActionResult Secret()
+        {
+
+            return View();
+
         }
         #endregion
     }
