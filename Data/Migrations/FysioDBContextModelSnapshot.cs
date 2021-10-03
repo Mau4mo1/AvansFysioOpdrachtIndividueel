@@ -50,6 +50,9 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.Property<int?>("TherapistId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TreatmentPlanId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IntakeDoneById");
@@ -57,6 +60,8 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.HasIndex("IntakeSupervisedById");
 
                     b.HasIndex("TherapistId");
+
+                    b.HasIndex("TreatmentPlanId");
 
                     b.ToTable("PatientDossierModel");
                 });
@@ -81,6 +86,61 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Person");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TreatmentModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Complications")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PatientDossierModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TreatmentDoneById")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TreatmentRoomOrTrainingRoom")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("TreatmentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VektisType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientDossierModelId");
+
+                    b.HasIndex("TreatmentDoneById");
+
+                    b.ToTable("TreatmentModel");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TreatmentPlanModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AmountOfTreaments")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeOfTreatment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TreatmentPlanModel");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>
@@ -118,11 +178,30 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                         .WithMany()
                         .HasForeignKey("TherapistId");
 
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.TreatmentPlanModel", "TreatmentPlan")
+                        .WithMany()
+                        .HasForeignKey("TreatmentPlanId");
+
                     b.Navigation("IntakeDoneBy");
 
                     b.Navigation("IntakeSupervisedBy");
 
                     b.Navigation("Therapist");
+
+                    b.Navigation("TreatmentPlan");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TreatmentModel", b =>
+                {
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", null)
+                        .WithMany("Treatments")
+                        .HasForeignKey("PatientDossierModelId");
+
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", "TreatmentDoneBy")
+                        .WithMany()
+                        .HasForeignKey("TreatmentDoneById");
+
+                    b.Navigation("TreatmentDoneBy");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>
@@ -138,6 +217,11 @@ namespace AvansFysioOpdrachtIndividueel.Migrations
                         .HasForeignKey("PatientDossierId");
 
                     b.Navigation("PatientDossier");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>
+                {
+                    b.Navigation("Treatments");
                 });
 #pragma warning restore 612, 618
         }

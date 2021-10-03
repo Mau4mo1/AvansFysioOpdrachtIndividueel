@@ -25,6 +25,9 @@ namespace AvansFysioOpdrachtIndividueel.Models
         // Extra comments to add by the therapist
         public string ExtraComments { get; set;}
         // Treatment plan
+        public TreatmentPlanModel TreatmentPlan {  get; set; }
+        // Treatments
+        public List<TreatmentModel> Treatments {  get; set; }
         public PatientDossierModel()
         {
 

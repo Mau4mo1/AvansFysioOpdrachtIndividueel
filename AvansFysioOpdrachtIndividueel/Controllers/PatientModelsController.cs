@@ -33,12 +33,20 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 return NotFound();
             }
-            PatientDossierViewModel patientModel = new PatientDossierViewModel();
+            PatientDossierViewModel patientModel = new();
             patientModel.PatientModel = _patientRepo.Get(id);
             patientModel.SelectItems = _patientRepo.Get();
             if (patientModel == null)
             {
                 return NotFound();
+            }
+            try
+            {
+                patientModel.TreatmentModels = _patientRepo.Get(id).PatientDossier.Treatments.ToList();
+            }
+            catch (Exception)
+            {
+
             }
 
             return View(patientModel);
@@ -148,15 +156,48 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public IActionResult AddDossier(PatientDossierViewModel model, int id)
         {
             PatientModel patientModel = _patientRepo.Get(id);
+            //patientModel.PatientDossier 
+            patientModel.PatientDossier.DueDate = model.PatientModel.PatientDossier.DueDate;
+            patientModel.PatientDossier.ExtraComments = model.PatientModel.PatientDossier.ExtraComments;
+            patientModel.PatientDossier.IssueDescription = model.PatientModel.PatientDossier.IssueDescription;
+            patientModel.PatientDossier.DiagnosisCode = model.PatientModel.PatientDossier.DiagnosisCode;
 
-            patientModel.PatientDossier = model.PatientModel.PatientDossier;
+            // TODO:: fix this hacky solution to model binding select boxes
+            // this checks if the default option was selected. if that is the case we will fill it with what it used to be, but this is not very air tight
+            if (model.IntakeDoneById == 0)
+            {
+                model.IntakeDoneById = patientModel.PatientDossier.IntakeDoneBy.Id;
+            }
+            if (model.TherapistId == 0)
+            {
+                model.TherapistId = patientModel.PatientDossier.Therapist.Id;
+            }
+            if (model.SupervisedById == 0)
+            {
+                model.SupervisedById = patientModel.PatientDossier.IntakeSupervisedBy.Id;
+            }
 
             patientModel.PatientDossier.IntakeDoneBy = _patientRepo.Get(model.IntakeDoneById);
             patientModel.PatientDossier.IntakeSupervisedBy = _patientRepo.Get(model.SupervisedById);
             patientModel.PatientDossier.Therapist = _patientRepo.Get(model.TherapistId);
 
             _patientRepo.Update(patientModel, id);
-            return RedirectToAction("Details", new { id = id });
+            return RedirectToAction("Details", new { id });
+        }
+        public IActionResult AddTreatment(PatientDossierViewModel model, int id)
+        {
+            PatientModel patientModel = _patientRepo.Get(id);
+            if (patientModel.PatientDossier.Treatments == null)
+            {
+                patientModel.PatientDossier.Treatments = new List<TreatmentModel>();
+            }
+            model.TreatmentModel.TreatmentDoneBy = _patientRepo.Get(model.TreatmentDoneById);
+            patientModel.PatientDossier.Treatments.Add(model.TreatmentModel);
+
+            _patientRepo.Update(patientModel, id);
+
+            // TODO:: find out if there is a better way to do this
+            return RedirectToAction("Details", new { id });
         }
     }
 }

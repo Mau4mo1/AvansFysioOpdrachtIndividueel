@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AvansFysioOpdrachtIndividueel.Migrations
 {
     [DbContext(typeof(FysioDBContext))]
-    [Migration("20210928211637_InitialCreate")]
+    [Migration("20210929071352_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
