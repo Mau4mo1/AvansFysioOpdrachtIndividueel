@@ -1,0 +1,34 @@
+﻿@model IEnumerable<AvansFysioOpdrachtIndividueel.Models.PatientModel>
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Patienten vandaag</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.PatientNumber)</th>
+            <th>Geboortedatum</th>
+            <th>Geslacht</th>
+            <th>Naam</th>
+            <th>Email</th>
+            <th>Behandeldatum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PatientNumber</td>
+                <td>@item.DateOfBirth</td>
+                <td>@item.Gender</td>
+                <td>@item.Name</td>
+                <td>@item.Email</td>
+                <td>@item.PatientDossier.PlannedDate</td>
+            </tr>
+        }
+    </tbody>
+</table>

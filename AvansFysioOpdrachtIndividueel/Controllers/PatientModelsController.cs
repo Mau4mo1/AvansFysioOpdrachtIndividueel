@@ -187,10 +187,12 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         {
             PatientModel patientModel = _patientRepo.Get(id);
+           
             if (patientModel.PatientDossier.Treatments == null)
             {
                 patientModel.PatientDossier.Treatments = new List<TreatmentModel>();
             }
+
             model.TreatmentModel.TreatmentDoneBy = _patientRepo.Get(model.TreatmentDoneById);
             patientModel.PatientDossier.Treatments.Add(model.TreatmentModel);
 
@@ -198,6 +200,17 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
             // TODO:: find out if there is a better way to do this
             return RedirectToAction("Details", new { id });
+        }
+
+        // TODO:: Maybe refactor to different controller
+
+        public IActionResult RemoveTreatment(int dossierId, int treatmentId, int id)
+        {
+            PatientModel patientModel = _patientRepo.Get(dossierId);
+            patientModel.PatientDossier.Treatments.Remove(patientModel.PatientDossier.Treatments.Find(x => x.Id == treatmentId));
+
+            _patientRepo.Update(patientModel, dossierId);
+            return RedirectToAction("Details", new { id});
         }
     }
 }

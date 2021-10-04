@@ -65,7 +65,7 @@
 
     @if (Model.PatientModel.PatientDossier.Treatments.Count > 0)
     {
-        <h2>Patienten dossier van @Model.PatientModel.Name</h2>
+        <h2>Behandelingen van @Model.PatientModel.Name</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -76,6 +76,7 @@
                     <th>Id</th>
                     <th>VektisType</th>
                     <th>Behandeling gedaan door</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,6 +90,7 @@
                         <td>@treatment.Id</td>
                         <td>@treatment.VektisType</td>
                         <td>@treatment.TreatmentDoneBy.Name</td>
+                        <td><a asp-action="RemoveTreatment" class="btn btn-primary" asp-route-id="@Model.PatientModel.Id" asp-route-dossierId="@Model.PatientModel.PatientDossier.Id" asp-route-treatmentId="@treatment.Id">Delete treatment </a> </td>
                     </tr>
                 }
             </tbody>

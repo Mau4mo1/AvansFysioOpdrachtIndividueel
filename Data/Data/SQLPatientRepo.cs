@@ -25,7 +25,13 @@ namespace AvansFysioOpdrachtIndividueel.Data
         }
         public List<PatientModel> Get()
         {
-            return _context.patients.ToList();
+            return _context.patients
+                .Include(patient => patient.PatientDossier)
+                    .ThenInclude(patient => patient.Treatments)
+                        .ThenInclude(patient => patient.TreatmentDoneBy)
+                .Include(patient => patient.PatientDossier.Therapist)
+                .Include(patient => patient.PatientDossier.IntakeSupervisedBy)
+                .ToList();
         }
         public PatientModel Get(int id)
         {
