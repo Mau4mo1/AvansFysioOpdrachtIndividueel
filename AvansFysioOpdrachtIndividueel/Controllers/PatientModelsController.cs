@@ -35,6 +35,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             }
             PatientDossierViewModel patientModel = new();
             patientModel.PatientModel = _patientRepo.Get(id);
+            // Make the selectitems only therapists. 
+            // For this we need a therapist repo
             patientModel.SelectItems = _patientRepo.Get();
             if (patientModel == null)
             {
