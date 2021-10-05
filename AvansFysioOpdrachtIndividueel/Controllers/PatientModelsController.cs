@@ -14,11 +14,14 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
     {
         private readonly FysioDBContext _context;
         private readonly IRepo<PatientModel> _patientRepo;
-
-        public PatientModelsController(FysioDBContext context, IRepo<PatientModel> repo)
+        private readonly IRepo<StudentModel> _studentRepo;
+        private readonly IRepo<TeacherModel> _teacherRepo;
+        public PatientModelsController(FysioDBContext context, IRepo<PatientModel> repo, IRepo<TeacherModel> teacherRepo, IRepo<StudentModel> studentRepo)
         {
             _context = context;
             _patientRepo = repo;
+            _studentRepo = studentRepo;
+            _teacherRepo = teacherRepo;
         }
 
         // GET: PatientModels
@@ -33,11 +36,27 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 return NotFound();
             }
+
             PatientDossierViewModel patientModel = new();
             patientModel.PatientModel = _patientRepo.Get(id);
             // Make the selectitems only therapists. 
             // For this we need a therapist repo
-            patientModel.SelectItems = _patientRepo.Get();
+            // TODO:: Find a better way to convert these 2 lists into personmodels..
+
+            List<TeacherModel> teacherModels = _teacherRepo.Get();
+            patientModel.Therapists = new List<SelectListItem>();
+            foreach (var teacherModel in teacherModels)
+            {
+                patientModel.Therapists.Add(new SelectListItem { Text = teacherModel.Name, Value = teacherModel.Id.ToString() });
+            }
+
+            List<StudentModel> studentModels = _studentRepo.Get();
+
+            foreach (var studentModel in studentModels)
+            {
+                patientModel.Therapists.Add(new SelectListItem { Text = studentModel.Name, Value = studentModel.Id.ToString() });
+            }
+
             if (patientModel == null)
             {
                 return NotFound();
@@ -158,30 +177,37 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public IActionResult AddDossier(PatientDossierViewModel model, int id)
         {
             PatientModel patientModel = _patientRepo.Get(id);
-            //patientModel.PatientDossier 
+            patientModel.PatientDossier.PlannedDate = model.PatientModel.PatientDossier.PlannedDate;
             patientModel.PatientDossier.DueDate = model.PatientModel.PatientDossier.DueDate;
             patientModel.PatientDossier.ExtraComments = model.PatientModel.PatientDossier.ExtraComments;
             patientModel.PatientDossier.IssueDescription = model.PatientModel.PatientDossier.IssueDescription;
             patientModel.PatientDossier.DiagnosisCode = model.PatientModel.PatientDossier.DiagnosisCode;
 
-            // TODO:: fix this hacky solution to model binding select boxes
-            // this checks if the default option was selected. if that is the case we will fill it with what it used to be, but this is not very air tight
-            if (model.IntakeDoneById == 0)
+            // TODO:: Find a better way? Right now it checks if the intake helpers are a student of a therapist. 
+            if (CheckIfTeacher(model.IntakeDoneById) == true)
             {
-                model.IntakeDoneById = patientModel.PatientDossier.IntakeDoneBy.Id;
+                patientModel.PatientDossier.IntakeDoneBy = _teacherRepo.Get(model.IntakeDoneById);
             }
-            if (model.TherapistId == 0)
+            else
             {
-                model.TherapistId = patientModel.PatientDossier.Therapist.Id;
+                patientModel.PatientDossier.IntakeDoneBy = _studentRepo.Get(model.IntakeDoneById);
             }
-            if (model.SupervisedById == 0)
+            if (CheckIfTeacher(model.SupervisedById) == true)
             {
-                model.SupervisedById = patientModel.PatientDossier.IntakeSupervisedBy.Id;
+                patientModel.PatientDossier.IntakeSupervisedBy = _teacherRepo.Get(model.SupervisedById);
             }
-
-            patientModel.PatientDossier.IntakeDoneBy = _patientRepo.Get(model.IntakeDoneById);
-            patientModel.PatientDossier.IntakeSupervisedBy = _patientRepo.Get(model.SupervisedById);
-            patientModel.PatientDossier.Therapist = _patientRepo.Get(model.TherapistId);
+            else
+            {
+                patientModel.PatientDossier.IntakeSupervisedBy = _studentRepo.Get(model.SupervisedById);
+            }
+            if (CheckIfTeacher(model.TherapistId) == true)
+            {
+                patientModel.PatientDossier.Therapist = _teacherRepo.Get(model.TherapistId);
+            }
+            else
+            {
+                patientModel.PatientDossier.Therapist = _studentRepo.Get(model.TherapistId);
+            }
 
             _patientRepo.Update(patientModel, id);
             return RedirectToAction("Details", new { id });
@@ -189,13 +215,20 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         {
             PatientModel patientModel = _patientRepo.Get(id);
-           
+
             if (patientModel.PatientDossier.Treatments == null)
             {
                 patientModel.PatientDossier.Treatments = new List<TreatmentModel>();
             }
-
-            model.TreatmentModel.TreatmentDoneBy = _patientRepo.Get(model.TreatmentDoneById);
+            if (CheckIfTeacher(model.TreatmentDoneById) == true)
+            {
+                model.TreatmentModel.TreatmentDoneBy = _teacherRepo.Get(model.TreatmentDoneById);
+            }
+            else
+            {
+                model.TreatmentModel.TreatmentDoneBy = _studentRepo.Get(model.TreatmentDoneById);
+            }
+            
             patientModel.PatientDossier.Treatments.Add(model.TreatmentModel);
 
             _patientRepo.Update(patientModel, id);
@@ -212,7 +245,21 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             patientModel.PatientDossier.Treatments.Remove(patientModel.PatientDossier.Treatments.Find(x => x.Id == treatmentId));
 
             _patientRepo.Update(patientModel, dossierId);
-            return RedirectToAction("Details", new { id});
+            return RedirectToAction("Details", new { id });
+        }
+
+        public bool CheckIfTeacher(int id)
+        {
+            var isTeacher = _teacherRepo.Get(id);
+
+            if (isTeacher != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

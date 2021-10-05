@@ -11,10 +11,13 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
     public class TherapistModelsController : Controller
     {
         private readonly IRepo<PatientModel> _patientRepo;
-
-        public TherapistModelsController(IRepo<PatientModel> repo)
+        private readonly IRepo<StudentModel> _studentRepo;
+        private readonly IRepo<TeacherModel> _teacherRepo;
+        public TherapistModelsController(IRepo<PatientModel> repo, IRepo<StudentModel> studentRepo, IRepo<TeacherModel> teacherRepo)
         {
             _patientRepo = repo;
+            _studentRepo = studentRepo;
+            _teacherRepo = teacherRepo;
         }
         // GET: TherapistModelsController
         public ActionResult Index()

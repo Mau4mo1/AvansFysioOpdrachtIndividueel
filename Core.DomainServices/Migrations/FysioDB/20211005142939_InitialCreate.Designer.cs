@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.DomainServices.Migrations.FysioDB
 {
     [DbContext(typeof(FysioDBContext))]
-    [Migration("20211005075153_InitiaCreate")]
-    partial class InitiaCreate
+    [Migration("20211005142939_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,9 +161,35 @@ namespace Core.DomainServices.Migrations.FysioDB
                     b.Property<int>("PatientNumber")
                         .HasColumnType("int");
 
+                    b.Property<int>("TeacherOrStudentNumber")
+                        .HasColumnType("int");
+
                     b.HasIndex("PatientDossierId");
 
                     b.ToTable("Patient");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+                {
+                    b.HasBaseType("AvansFysioOpdrachtIndividueel.Models.PersonModel");
+
+                    b.Property<int>("StudentNumber")
+                        .HasColumnType("int");
+
+                    b.ToTable("Student");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TeacherModel", b =>
+                {
+                    b.HasBaseType("AvansFysioOpdrachtIndividueel.Models.PersonModel");
+
+                    b.Property<int>("BIGNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PersonnelNumber")
+                        .HasColumnType("int");
+
+                    b.ToTable("Teacher");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>
@@ -219,6 +245,24 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasForeignKey("PatientDossierId");
 
                     b.Navigation("PatientDossier");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+                {
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", null)
+                        .WithOne()
+                        .HasForeignKey("AvansFysioOpdrachtIndividueel.Models.StudentModel", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TeacherModel", b =>
+                {
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", null)
+                        .WithOne()
+                        .HasForeignKey("AvansFysioOpdrachtIndividueel.Models.TeacherModel", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>

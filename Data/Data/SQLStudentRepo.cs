@@ -8,39 +8,38 @@ using System.Threading.Tasks;
 
 namespace Core.Data.Data
 {
-    class SQLTherapistRepo : IRepo<TherapistModel>
+    public class SQLStudentRepo : IRepo<StudentModel>
     {
         FysioDBContext _context = new();
-        public SQLTherapistRepo(FysioDBContext context)
+        public SQLStudentRepo(FysioDBContext context)
         {
             _context = context;
         }
-        public void Create(TherapistModel entity)
+        public void Create(StudentModel entity)
+        {
+            throw new NotImplementedException();
+        }
+        public List<StudentModel> Get()
+        {
+            return _context.students.ToList();
+        }
+
+        public StudentModel Get(int id)
+        {
+            return _context.students.Find(id);
+        }
+
+        public StudentModel Get(StudentModel entity)
         {
             throw new NotImplementedException();
         }
 
-        public List<TherapistModel> Get()
+        public void Remove(int id)
         {
             throw new NotImplementedException();
         }
 
-        public TherapistModel Get(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public TherapistModel Get(TherapistModel entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(int id)      
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(TherapistModel entity, int id)
+        public void Update(StudentModel entity, int id)
         {
             throw new NotImplementedException();
         }

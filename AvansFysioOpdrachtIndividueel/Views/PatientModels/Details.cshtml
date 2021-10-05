@@ -39,7 +39,6 @@
                     <th>IntakeDoneBy</th>
                     <th>IntakeSupervisedBy</th>
                     <th>DueDate</th>
-                    <th>PlannedDate</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,7 +51,6 @@
                     <td>@Model.PatientModel.PatientDossier.IntakeDoneBy.Name</td>
                     <td>@Model.PatientModel.PatientDossier.IntakeSupervisedBy.Name</td>
                     <td>@Model.PatientModel.PatientDossier.DueDate</td>
-                    <td>@Model.PatientModel.PatientDossier.PlannedDate</td>
                 </tr>
             </tbody>
         </table>
@@ -113,7 +111,7 @@
         <div class="form-group">
             <label asp-for="@Model.TreatmentDoneById">Behandeling gedaan door:</label>
             <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TreatmentDoneById"
-                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
+                    asp-items="@Model.Therapists">
                 <option>Selecteer een optie</option>
             </select>
         </div>
@@ -145,54 +143,65 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="@Model.IntakeDoneById">Intake gedaan door:</label>
-        </div>
-
-        <div class="form-group">
             <label asp-for="@Model.SupervisedById">Intake gesupervised door:</label>
             <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.SupervisedById"
-                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
-                <option>
-                    @if (@Model.PatientModel.PatientDossier.IntakeSupervisedBy != null)
-                    {
+                    asp-items="@Model.Therapists">
+                @if (@Model.PatientModel.PatientDossier.IntakeSupervisedBy != null)
+                {
+                    <option value="@Model.PatientModel.PatientDossier.IntakeSupervisedBy.Id">
                         @Model.PatientModel.PatientDossier.IntakeSupervisedBy.Name
-                    }
-                </option>
+                    </option>
+                }
+                else
+                {
+                    <option>
+                        Selecteer een optie
+                    </option>
+                }
+
             </select>
             <label asp-for="@Model.TherapistId">Therapuit:</label>
             <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TherapistId"
-                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
-                <option>
-                    @if (@Model.PatientModel.PatientDossier.Therapist != null)
-                    {
+                    asp-items="@Model.Therapists">
+                @if (@Model.PatientModel.PatientDossier.Therapist.Name != null)
+                {
+                    <option value="@Model.PatientModel.PatientDossier.Therapist.Id">
                         @Model.PatientModel.PatientDossier.Therapist.Name
-                    }
-                </option>
+                    </option>
+                }
+                else
+                {
+                    <option>
+                        Selecteer een optie
+                    </option>
+                }
             </select>
             <label asp-for="@Model.IntakeDoneById">Intake gedaan door:</label>
             <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.IntakeDoneById"
-                    asp-items="@(new SelectList(Model.SelectItems,"Id","Name"))">
-                <option>
-                    @if (@Model.PatientModel.PatientDossier.IntakeDoneBy != null)
-                    {
+                    asp-items="@Model.Therapists">
+                @if (@Model.PatientModel.PatientDossier.IntakeDoneBy != null)
+                {
+                    <option value="@Model.PatientModel.PatientDossier.IntakeDoneBy.Id">
                         @Model.PatientModel.PatientDossier.IntakeDoneBy.Name
-                    }
-                </option>
+                    </option>
+                }
+                else
+                {
+                    <option>
+                        Selecteer een optie
+                    </option>
+                }
             </select>
         </div>
 
         <div class="form-group">
-            <label asp-for="@Model.PatientModel.PatientDossier.PlannedDate">Wie gaat de therapie uitvoeren:</label>
+            <label asp-for="@Model.PatientModel.PatientDossier.PlannedDate">Wanneer wordt @Model.PatientModel.Name gehlopen:</label>
             <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.PlannedDate" />
         </div>
 
         <div class="form-group">
             <label asp-for="@Model.PatientModel.PatientDossier.DueDate">Tot wanneer krijgt @Model.PatientModel.Name hulp:</label>
             <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.DueDate" />
-        </div>
-
-        <div class="form-group">
-            <label asp-for="@Model.TherapistId">Wie gaat de therapie uitvoeren:</label>
         </div>
 
         <div class="form-group">

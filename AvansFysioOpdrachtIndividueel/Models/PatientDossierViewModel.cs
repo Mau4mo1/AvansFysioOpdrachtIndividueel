@@ -9,7 +9,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
     public class PatientDossierViewModel
     {
         public PatientModel PatientModel { get; set; }
-        public List<PatientModel> SelectItems {  get; set; }
+        public List<SelectListItem> Therapists {  get; set; }
         public int SupervisedById { get; set; }
         public int IntakeDoneById { get; set; }
         public int TherapistId { get; set; }

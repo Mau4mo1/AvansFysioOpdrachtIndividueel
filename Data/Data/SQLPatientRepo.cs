@@ -1,11 +1,12 @@
-﻿using AvansFysioOpdrachtIndividueel.Models;
+﻿using AvansFysioOpdrachtIndividueel.Data;
+using AvansFysioOpdrachtIndividueel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AvansFysioOpdrachtIndividueel.Data
+namespace Core.Data.Data
 {
     public class SQLPatientRepo : IRepo<PatientModel>
     {

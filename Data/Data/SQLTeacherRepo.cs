@@ -8,30 +8,30 @@ using System.Threading.Tasks;
 
 namespace Core.Data.Data
 {
-    public class SQLTreatmentRepo : IRepo<TreatmentModel>
+    public class SQLTeacherRepo : IRepo<TeacherModel>
     {
         FysioDBContext _context = new();
-        public SQLTreatmentRepo(FysioDBContext context)
+        public SQLTeacherRepo(FysioDBContext context)
         {
             _context = context;
         }
 
-        public void Create(TreatmentModel entity)
+        public void Create(TeacherModel entity)
         {
             throw new NotImplementedException();
         }
 
-        public List<TreatmentModel> Get()
+        public List<TeacherModel> Get()
         {
-            throw new NotImplementedException();
+            return _context.teachers.ToList();   
         }
 
-        public TreatmentModel Get(int id)
+        public TeacherModel Get(int id)
         {
-            return _context.patients.Find(id).PatientDossier.Treatments.Find(x => x.Id == id);
+            return _context.teachers.Find(id);
         }
 
-        public TreatmentModel Get(TreatmentModel entity)
+        public TeacherModel Get(TeacherModel entity)
         {
             throw new NotImplementedException();
         }
@@ -41,7 +41,7 @@ namespace Core.Data.Data
             throw new NotImplementedException();
         }
 
-        public void Update(TreatmentModel entity, int id)
+        public void Update(TeacherModel entity, int id)
         {
             throw new NotImplementedException();
         }

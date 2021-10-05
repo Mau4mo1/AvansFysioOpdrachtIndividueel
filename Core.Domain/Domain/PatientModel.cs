@@ -8,6 +8,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
     public class PatientModel : PersonModel
     {
         public int PatientNumber { get; set; }
+        public int TeacherOrStudentNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Gender { get; set; }
         public PatientDossierModel PatientDossier {  get; set;}

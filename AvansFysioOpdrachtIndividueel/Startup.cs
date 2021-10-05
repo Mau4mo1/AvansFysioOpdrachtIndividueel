@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Core.Data.Data;
 
 namespace AvansFysioOpdrachtIndividueel
 {
@@ -35,6 +36,8 @@ namespace AvansFysioOpdrachtIndividueel
             // Dependency Injection
             services.AddDbContext<FysioDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddScoped<IRepo<PatientModel>, SQLPatientRepo>();
+            services.AddScoped<IRepo<TeacherModel>, SQLTeacherRepo>();
+            services.AddScoped<IRepo<StudentModel>, SQLStudentRepo>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // Authorization
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("User")));
