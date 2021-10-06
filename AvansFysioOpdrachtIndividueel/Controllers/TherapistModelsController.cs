@@ -29,12 +29,30 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         // GET: TherapistModelsController/Details/5
         public ActionResult Details(int id)
         {
-            // the ID here is the Therapist ID
-            // This method needs to get all the treatments that are assigned to me.
-            var patients = _patientRepo.Get().Where(p => p.PatientDossier.Therapist.Id == id).OrderBy(p => p.PatientDossier.PlannedDate);
+            // Find all patients that belong to this therapist and that have a treatment today.
+            List<PatientModel> patients = _patientRepo.Get();
+            List<PatientTreatmentViewModel> viewModel = new List<PatientTreatmentViewModel>();
+            // TODO:: is there a better way to do this?
+            foreach(PatientModel pat in patients)
+            {
+                List<TreatmentModel> treatmentModels = pat.PatientDossier.Treatments.
+                    Where(t => t.TreatmentDoneBy.Id == id && t.TreatmentTime.Date == DateTime.Today.Date).ToList();
+                if(treatmentModels.Count > 0)
+                {
+                    viewModel.Add(new PatientTreatmentViewModel
+                    {
+                        Name = pat.Name,
+                        Id = pat.Id,
+                        Treatments = treatmentModels
+                    });
+                }    
+            }
 
-            return View(patients);
+            return View(viewModel);
         }
+        /*               .Where(p => p.PatientDossier.Therapist.Id == id && p.PatientDossier.Treatments
+                    .Any(t => t.TreatmentTime.Date == DateTime.Today.Date))
+                .OrderBy(p => p.PatientDossier.PlannedDate); */
 
         // GET: TherapistModelsController/Create
         public ActionResult Create()
