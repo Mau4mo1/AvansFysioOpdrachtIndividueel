@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvansFysioOpdrachtIndividueel.Models
 {
+
+    // Validation of this model is done in the ViewModel
     public class PatientDossierModel
     {
         public int Id { get; set; }
@@ -21,16 +24,16 @@ namespace AvansFysioOpdrachtIndividueel.Models
         // When will the patient get helped?
         public DateTime PlannedDate { get; set; }
         // Until when will the patient get helped?
-        public DateTime DueDate {  get; set;}
+        public DateTime DueDate { get; set; }
         // Extra comments to add by the therapist
-        public string ExtraComments { get; set;}
+        public List<CommentModel> ExtraComments { get; set; }
         // Treatment plan
-        public TreatmentPlanModel TreatmentPlan {  get; set; }
+        public TreatmentPlanModel TreatmentPlan { get; set; }
         // Treatments
-        public List<TreatmentModel> Treatments {  get; set; }
+        public List<TreatmentModel> Treatments { get; set; }
         public PatientDossierModel()
         {
-
+            
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,7 +8,9 @@ namespace AvansFysioOpdrachtIndividueel.Models
 {
     public class TeacherModel : PersonModel
     {
+        [Required]
         public int BIGNumber { get; set; }
+        [Required]
         public int PersonnelNumber {  get; set; }
         public TeacherModel()
         {

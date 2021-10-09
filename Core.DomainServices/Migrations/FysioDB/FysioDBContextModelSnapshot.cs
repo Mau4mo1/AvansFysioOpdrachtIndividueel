@@ -19,6 +19,37 @@ namespace Core.DomainServices.Migrations.FysioDB
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.CommentModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CommentMadeById")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("CommentVisibleForPatient")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PatientDossierModelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeOfCreation")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentMadeById");
+
+                    b.HasIndex("PatientDossierModelId");
+
+                    b.ToTable("CommentModel");
+                });
+
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>
                 {
                     b.Property<int>("Id")
@@ -31,9 +62,6 @@ namespace Core.DomainServices.Migrations.FysioDB
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ExtraComments")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("IntakeDoneById")
                         .HasColumnType("int");
@@ -190,6 +218,19 @@ namespace Core.DomainServices.Migrations.FysioDB
                     b.ToTable("Teacher");
                 });
 
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.CommentModel", b =>
+                {
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", "CommentMadeBy")
+                        .WithMany()
+                        .HasForeignKey("CommentMadeById");
+
+                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", null)
+                        .WithMany("ExtraComments")
+                        .HasForeignKey("PatientDossierModelId");
+
+                    b.Navigation("CommentMadeBy");
+                });
+
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>
                 {
                     b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", "IntakeDoneBy")
@@ -265,6 +306,8 @@ namespace Core.DomainServices.Migrations.FysioDB
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientDossierModel", b =>
                 {
+                    b.Navigation("ExtraComments");
+
                     b.Navigation("Treatments");
                 });
 #pragma warning restore 612, 618

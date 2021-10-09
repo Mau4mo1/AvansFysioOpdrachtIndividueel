@@ -33,7 +33,6 @@
                 <tr>
                     <th>PlannedDate</th>
                     <th>Therapist</th>
-                    <th>ExtraComments</th>
                     <th>Diagnose code</th>
 
                     <th>IntakeDoneBy</th>
@@ -45,7 +44,6 @@
                 <tr>
                     <td>@Model.PatientModel.PatientDossier.PlannedDate</td>
                     <td>@Model.PatientModel.PatientDossier.Therapist.Name</td>
-                    <td>@Model.PatientModel.PatientDossier.ExtraComments</td>
                     <td>@Model.PatientModel.PatientDossier.DiagnosisCode</td>
 
                     <td>@Model.PatientModel.PatientDossier.IntakeDoneBy.Name</td>
@@ -54,7 +52,79 @@
                 </tr>
             </tbody>
         </table>
+        @if (Model.PatientModel.PatientDossier.ExtraComments != null)
+        {
+            <h2>Extra opmerkingen</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Opmerking</th>
+                        <th>Aangemaakt op:</th>
+                        <th>Gemaakt door:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var comment in Model.PatientModel.PatientDossier.ExtraComments)
+                    {
+                        <tr>
+                            <td>@comment.Id</td>
+                            <td>@comment.Comment</td>
+                            <td>@comment.TimeOfCreation</td>
+                            <td>@comment.CommentMadeBy.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h2>Hier komen extra opmerkingen</h2>
+        }
+        <form asp-action="AddComment" asp-route-id="@Model.PatientModel.Id" method="post">
+            <div asp-validation-summary="All"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Comment.Comment">Opmerking:</label>
+                <input class="form-control" asp-for="@Model.Comment.Comment" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Comment.CommentVisibleForPatient">Moet de opmerking zichtbaar zijn voor de patient?:</label>
+                <input class="form-control" asp-for="@Model.Comment.CommentVisibleForPatient" />
+            </div>
+            <button class="btn btn-primary" type="submit">Client toevoegen</button>
+        </form>
 
+        <form asp-action="AddTreatment" asp-route-id="@Model.PatientModel.Id" method="post">
+            <div asp-validation-summary="All"></div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentModel.VektisType">Vektis Type:</label>
+                <input class="form-control" asp-for="@Model.TreatmentModel.VektisType" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentModel.Description">Beschrijving:</label>
+                <input class="form-control" asp-for="@Model.TreatmentModel.Description" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentDoneById">Behandeling gedaan door:</label>
+                <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TreatmentDoneById"
+                    asp-items="@Model.Therapists">
+                    <option>Selecteer een optie</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentModel.TreatmentTime">Wanneer vind de behandeling plaats:</label>
+                <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentTime" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom">Is het een behandelkamer?</label>
+                <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.TreatmentModel.Complications">Zijn er nog extra complicaties:</label>
+                <input class="form-control" asp-for="@Model.TreatmentModel.Complications" />
+            </div>
+            <button class="btn btn-primary" type="submit">Client toevoegen</button>
+        </form>
     }
     else
     {
@@ -98,38 +168,6 @@
     {
         <h2>Hier komen patient behandelingen</h2>
     }
-    <form asp-action="AddTreatment" asp-route-id="@Model.PatientModel.Id" method="post">
-        <div asp-validation-summary="All"></div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentModel.VektisType">Vektis Type:</label>
-            <input class="form-control" asp-for="@Model.TreatmentModel.VektisType" />
-        </div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentModel.Description">Beschrijving:</label>
-            <input class="form-control" asp-for="@Model.TreatmentModel.Description" />
-        </div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentDoneById">Behandeling gedaan door:</label>
-            <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TreatmentDoneById"
-                    asp-items="@Model.Therapists">
-                <option>Selecteer een optie</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentModel.TreatmentTime">Wanneer vind de behandeling plaats:</label>
-            <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentTime" />
-        </div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom">Is het een behandelkamer?</label>
-            <input class="form-control" asp-for="@Model.TreatmentModel.TreatmentRoomOrTrainingRoom" />
-        </div>
-        <div class="form-group">
-            <label asp-for="@Model.TreatmentModel.Complications">Zijn er nog extra complicaties:</label>
-            <input class="form-control" asp-for="@Model.TreatmentModel.Complications" />
-        </div>
-        <button class="btn btn-primary" type="submit">Client toevoegen</button>
-    </form>
-
     <form asp-action="AddDossier" asp-route-id="@Model.PatientModel.Id" method="post">
         <div asp-validation-summary="All"></div>
         <div class="form-group">
@@ -163,7 +201,7 @@
             <label asp-for="@Model.TherapistId">Therapuit:</label>
             <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TherapistId"
                     asp-items="@Model.Therapists">
-                @if (@Model.PatientModel.PatientDossier.Therapist.Name != null)
+                @if (@Model.PatientModel.PatientDossier.Therapist != null)
                 {
                     <option value="@Model.PatientModel.PatientDossier.Therapist.Id">
                         @Model.PatientModel.PatientDossier.Therapist.Name
@@ -202,11 +240,6 @@
         <div class="form-group">
             <label asp-for="@Model.PatientModel.PatientDossier.DueDate">Tot wanneer krijgt @Model.PatientModel.Name hulp:</label>
             <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.DueDate" />
-        </div>
-
-        <div class="form-group">
-            <label asp-for="@Model.PatientModel.PatientDossier.ExtraComments">Extra toevoegingen:</label>
-            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.ExtraComments" />
         </div>
 
         <button class="btn btn-primary" type="submit">Client toevoegen</button>

@@ -39,20 +39,11 @@ namespace Core.Data.Data
             var patient = _context.patients.Where(x => x.Id == id)
                 .Include(patient => patient.PatientDossier)
                     .ThenInclude(patient => patient.Treatments)
-                        .ThenInclude(patient => patient.TreatmentDoneBy)
+                        .ThenInclude(treatment => treatment.TreatmentDoneBy)
+                .Include(patient => patient.PatientDossier.ExtraComments)
                 .Include(patient => patient.PatientDossier.Therapist)
                 .Include(patient => patient.PatientDossier.IntakeSupervisedBy)
                 .First();
-
-            if (patient.PatientDossier == null)
-            {
-                patient.PatientDossier = new PatientDossierModel();
-            }
-            if (patient.PatientDossier.Treatments == null)
-            {
-                patient.PatientDossier.Treatments = new List<TreatmentModel>();
-            }
-
 
             return patient;
         }

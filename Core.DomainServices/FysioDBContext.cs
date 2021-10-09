@@ -25,7 +25,9 @@ namespace AvansFysioOpdrachtIndividueel.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<PatientModel>().ToTable("Patient");
-            modelBuilder.Entity<PersonModel>().ToTable("Person");
+            modelBuilder.Entity<PersonModel>().ToTable("Person")
+                .HasIndex(p => new { p.Email })
+                .IsUnique(true);
             modelBuilder.Entity<TeacherModel>().ToTable("Teacher");
             modelBuilder.Entity<StudentModel>().ToTable("Student");
             //modelBuilder.Entity<PersonModel>().ToTable("PatientDossier");
@@ -33,6 +35,7 @@ namespace AvansFysioOpdrachtIndividueel.Data
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
 
         }
 

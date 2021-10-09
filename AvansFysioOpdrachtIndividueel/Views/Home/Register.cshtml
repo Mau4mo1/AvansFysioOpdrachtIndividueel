@@ -4,6 +4,8 @@
 @{
 }
 <form action="/Home/Register" method="post">
+    <div asp-validation-summary="All"></div>
+
     <input type="text" name="username" value="" />
     <input type="password"  name="password" value="" />
     <button type="submit">Register</button>

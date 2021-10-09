@@ -85,7 +85,6 @@ namespace Core.DomainServices.Migrations.FysioDB
                     TherapistId = table.Column<int>(type: "int", nullable: true),
                     PlannedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExtraComments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TreatmentPlanId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -113,6 +112,35 @@ namespace Core.DomainServices.Migrations.FysioDB
                         name: "FK_PatientDossierModel_TreatmentPlanModel_TreatmentPlanId",
                         column: x => x.TreatmentPlanId,
                         principalTable: "TreatmentPlanModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommentModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TimeOfCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CommentMadeById = table.Column<int>(type: "int", nullable: true),
+                    CommentVisibleForPatient = table.Column<bool>(type: "bit", nullable: false),
+                    PatientDossierModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CommentModel_PatientDossierModel_PatientDossierModelId",
+                        column: x => x.PatientDossierModelId,
+                        principalTable: "PatientDossierModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CommentModel_Person_CommentMadeById",
+                        column: x => x.CommentMadeById,
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -177,6 +205,16 @@ namespace Core.DomainServices.Migrations.FysioDB
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CommentModel_CommentMadeById",
+                table: "CommentModel",
+                column: "CommentMadeById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommentModel_PatientDossierModelId",
+                table: "CommentModel",
+                column: "PatientDossierModelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Patient_PatientDossierId",
                 table: "Patient",
                 column: "PatientDossierId");
@@ -214,6 +252,9 @@ namespace Core.DomainServices.Migrations.FysioDB
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CommentModel");
+
             migrationBuilder.DropTable(
                 name: "Patient");
 

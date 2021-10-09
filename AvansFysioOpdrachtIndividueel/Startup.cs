@@ -47,7 +47,9 @@ namespace AvansFysioOpdrachtIndividueel
                     config.Cookie.Name = "Login.Cookie";
                     config.LoginPath = "/Home/Authenticate";
                 });
-
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<UserDBContext>()
+                .AddDefaultTokenProviders();
             services.AddAuthorization(config =>
             {
                 var defaultAuthBuilder = new AuthorizationPolicyBuilder();
@@ -56,16 +58,12 @@ namespace AvansFysioOpdrachtIndividueel
                 .Build();
 
                 config.AddPolicy("RequireFysiotherapistRole",
-                    policy => policy.RequireRole("Fysiotherapist"));
+                    policy => policy.RequireRole("Fysiotherapist", "Patient"));
                 config.AddPolicy("RequirePatientRole",
-                    policy => policy.RequireRole("Patient"));
-
+                    policy => policy.RequireRole("Patient", "Fysiotherapist"));
                 config.DefaultPolicy = defaultAuthPolicy;
             });
-
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<UserDBContext>()
-                .AddDefaultTokenProviders();
+            
             services.ConfigureApplicationCookie(config =>
             {
                 config.Cookie.Name = "Identity.Cookie";
@@ -92,7 +90,7 @@ namespace AvansFysioOpdrachtIndividueel
 
 
             app.UseRouting();
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
 

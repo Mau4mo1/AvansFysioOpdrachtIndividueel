@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AvansFysioOpdrachtIndividueel.Data;
 using AvansFysioOpdrachtIndividueel.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AvansFysioOpdrachtIndividueel.Controllers
 {
@@ -25,6 +26,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         }
 
         // GET: PatientModels
+        [Authorize(Roles = "Patient")]
         public IActionResult Index()
         {
             return View(_patientRepo.Get().ToList());
@@ -36,38 +38,10 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 return NotFound();
             }
-
-            PatientDossierViewModel patientModel = new();
-            patientModel.PatientModel = _patientRepo.Get(id);
-            // Make the selectitems only therapists. 
-            // For this we need a therapist repo
-            // TODO:: Find a better way to convert these 2 lists into personmodels..
-
-            List<TeacherModel> teacherModels = _teacherRepo.Get();
-            patientModel.Therapists = new List<SelectListItem>();
-            foreach (var teacherModel in teacherModels)
-            {
-                patientModel.Therapists.Add(new SelectListItem { Text = teacherModel.Name, Value = teacherModel.Id.ToString() });
-            }
-
-            List<StudentModel> studentModels = _studentRepo.Get();
-
-            foreach (var studentModel in studentModels)
-            {
-                patientModel.Therapists.Add(new SelectListItem { Text = studentModel.Name, Value = studentModel.Id.ToString() });
-            }
-
-            if (patientModel == null)
+            PatientDossierViewModel patientModel = FillPatientDossierViewModel(id);
+            if(patientModel == null)
             {
                 return NotFound();
-            }
-            try
-            {
-                patientModel.TreatmentModels = _patientRepo.Get(id).PatientDossier.Treatments.ToList();
-            }
-            catch (Exception)
-            {
-
             }
 
             return View(patientModel);
@@ -85,6 +59,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         {
             if (ModelState.IsValid)
             {
+                patientModel.PatientDossier = new PatientDossierModel();
+                patientModel.PatientDossier.ExtraComments = new List<CommentModel>();
                 _patientRepo.Create(patientModel);
                 return RedirectToAction(nameof(Index));
             }
@@ -176,6 +152,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
         public IActionResult AddDossier(PatientDossierViewModel model, int id)
         {
+
             PatientModel patientModel = _patientRepo.Get(id);
             patientModel.PatientDossier.PlannedDate = model.PatientModel.PatientDossier.PlannedDate;
             patientModel.PatientDossier.DueDate = model.PatientModel.PatientDossier.DueDate;
@@ -211,6 +188,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
             _patientRepo.Update(patientModel, id);
             return RedirectToAction("Details", new { id });
+            
         }
         public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         {
@@ -241,13 +219,13 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
         public IActionResult RemoveTreatment(int dossierId, int treatmentId, int id)
         {
-            PatientModel patientModel = _patientRepo.Get(dossierId);
+            PatientModel patientModel = _patientRepo.Get(id);
             patientModel.PatientDossier.Treatments.Remove(patientModel.PatientDossier.Treatments.Find(x => x.Id == treatmentId));
 
             _patientRepo.Update(patientModel, dossierId);
             return RedirectToAction("Details", new { id });
         }
-
+        // TODO:: Definetly find a way to not need this function anymore
         public bool CheckIfTeacher(int id)
         {
             var isTeacher = _teacherRepo.Get(id);
@@ -260,6 +238,62 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 return false;
             }
+        }
+
+        public IActionResult AddComment(int id,PatientDossierViewModel patientDossierViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                PatientModel patientModel = _patientRepo.Get(id);
+                // TODO:: change this to the current logged in user.
+                patientDossierViewModel.Comment.CommentMadeBy = _patientRepo.Get(id);
+                patientDossierViewModel.Comment.TimeOfCreation = DateTime.Now;
+                patientModel.PatientDossier.ExtraComments.Add(patientDossierViewModel.Comment);
+
+
+                _patientRepo.Update(patientModel, id);
+
+                return RedirectToAction("Details", new { id });
+            }
+            else
+            {
+                // Need to return view, otherwise modelstate gets lost
+                return View("Details", FillPatientDossierViewModel(id));
+            }
+           
+        }
+
+        public PatientDossierViewModel FillPatientDossierViewModel(int id)
+        {
+            PatientDossierViewModel patientModel = new();
+            patientModel.PatientModel = _patientRepo.Get(id);
+            // Make the selectitems only therapists. 
+            // For this we need a therapist repo
+            // TODO:: Find a better way to convert these 2 lists into personmodels..
+
+            List<TeacherModel> teacherModels = _teacherRepo.Get();
+            patientModel.Therapists = new List<SelectListItem>();
+            foreach (var teacherModel in teacherModels)
+            {
+                patientModel.Therapists.Add(new SelectListItem { Text = teacherModel.Name, Value = teacherModel.Id.ToString() });
+            }
+
+            List<StudentModel> studentModels = _studentRepo.Get();
+
+            foreach (var studentModel in studentModels)
+            {
+                patientModel.Therapists.Add(new SelectListItem { Text = studentModel.Name, Value = studentModel.Id.ToString() });
+            }
+
+            try
+            {
+                patientModel.TreatmentModels = _patientRepo.Get(id).PatientDossier.Treatments.ToList();
+            }
+            catch (Exception)
+            {
+
+            }
+            return patientModel;
         }
     }
 }

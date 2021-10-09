@@ -50,11 +50,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
             return View(viewModel);
         }
-        /*               .Where(p => p.PatientDossier.Therapist.Id == id && p.PatientDossier.Treatments
-                    .Any(t => t.TreatmentTime.Date == DateTime.Today.Date))
-                .OrderBy(p => p.PatientDossier.PlannedDate); */
 
-        // GET: TherapistModelsController/Create
+        // GET: TherapistModelsController/Create    
         public ActionResult Create()
         {
             return View();

@@ -38,15 +38,22 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             _signInManager = signInManager;
         }
         // Komt een verzoek binnen vanuit de index
-        public IActionResult Index()
+        public async Task<ViewResult> Index()
         {
             // Maak gebruik van de model
             PersonViewModelLists personViewModel = new PersonViewModelLists();
             // Doe een data verzoek naar een Repository en vul de model
             personViewModel.PatientModels = _patientRepo.Get();
             // Roep view aan en stuur data door naar view
-            ViewBag.User = _userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
 
+            if (user.UserName != null)
+            {
+                //TODO:: Find a way to not have to do this?
+                personViewModel.PersonViewModel = new PersonViewModel();
+                personViewModel.PersonViewModel.PatientModel = _patientRepo.Get().Where(p => p?.Email == user?.UserName).FirstOrDefault();
+            }
+            
             return View(personViewModel);
         }
 
@@ -107,23 +114,48 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string userName, string password)
         {
+
             var user = new IdentityUser()
             {
                 UserName = userName
             };
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
+            //if (userName == null)
+            //{
+            //    ModelState.AddModelError("UsernameNull", "Vull aub een geldig email adres in.");
+            //    return View();
+            //}
+            if (password == null)
             {
-                // sign in
-                var signInResult = await _signInManager.PasswordSignInAsync(userName, password, false, false);
-
-                if (signInResult.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
+                ModelState.AddModelError("PasswordNull", "Vull aub een wachtwoord in.");
+                return View();
             }
-            return View();
+            if (_patientRepo.Get().Where(p => p.Email == userName).FirstOrDefault() != null)
+            {
+                var result = await _userManager.CreateAsync(user, password);
+
+                if (result.Succeeded)
+                {
+                    var currentUser = _userManager.FindByNameAsync(user.UserName);
+                    var roleresult =  await _userManager.AddToRoleAsync(currentUser.Result, "Patient");
+                    // sign in
+                    var signInResult = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+
+                    return RedirectToAction("Index");
+
+                }
+                foreach (var item in result.Errors)
+                {
+                    ModelState.AddModelError("UserError", item.Description);
+                }
+
+                return View();
+            }
+            else
+            {
+                ModelState.AddModelError("MatchingMail", "Er is geen matchende email gevonden");
+                return View();
+            }
+
         }
         public async Task<IActionResult> Logout()
         {
