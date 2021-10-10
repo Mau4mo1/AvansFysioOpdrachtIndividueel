@@ -193,7 +193,10 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         {
             PatientModel patientModel = _patientRepo.Get(id);
-
+            if (!ModelState.IsValid)
+            {
+                return View("Details", FillPatientDossierViewModel(id));
+            }
             if (patientModel.PatientDossier.Treatments == null)
             {
                 patientModel.PatientDossier.Treatments = new List<TreatmentModel>();

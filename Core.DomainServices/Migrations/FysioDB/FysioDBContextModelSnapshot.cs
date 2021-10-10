@@ -27,7 +27,9 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("CommentMadeById")
                         .HasColumnType("int");
@@ -113,6 +115,9 @@ namespace Core.DomainServices.Migrations.FysioDB
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Person");
                 });
 
@@ -124,10 +129,13 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Complications")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("PatientDossierModelId")
                         .HasColumnType("int");
@@ -164,6 +172,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasColumnType("int");
 
                     b.Property<string>("TimeOfTreatment")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -179,6 +188,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Gender")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PatientDossierId")
@@ -203,6 +213,22 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasColumnType("int");
 
                     b.ToTable("Student");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 4,
+                            Email = "meesmake@outlook.com",
+                            Name = "Mees Maske",
+                            StudentNumber = 321
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "kevin@outlook.com",
+                            Name = "Kevin Verhoeven",
+                            StudentNumber = 33421
+                        });
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TeacherModel", b =>
@@ -216,6 +242,32 @@ namespace Core.DomainServices.Migrations.FysioDB
                         .HasColumnType("int");
 
                     b.ToTable("Teacher");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "mauricederidder@outlook.com",
+                            Name = "Maurice de Ridder",
+                            BIGNumber = 32,
+                            PersonnelNumber = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "timdelaater@outlook.com",
+                            Name = "Tim de Laater",
+                            BIGNumber = 3,
+                            PersonnelNumber = 3231
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "ricoschouten@outlook.com",
+                            Name = "Rico Schouten",
+                            BIGNumber = 55,
+                            PersonnelNumber = 98721
+                        });
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.CommentModel", b =>

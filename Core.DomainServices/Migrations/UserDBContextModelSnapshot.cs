@@ -44,38 +44,26 @@ namespace Core.DomainServices.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<string>", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IdentityRole<string>");
 
                     b.HasData(
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "",
-                            Name = "Fysiotherapist",
-                            NormalizedName = "Fysiotherapist"
+                            ConcurrencyStamp = "39a1c907-34ad-4535-bf14-75a337528917",
+                            Name = "Therapist",
+                            NormalizedName = "Therapist"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "",
+                            ConcurrencyStamp = "6088cb80-9603-4d03-bbd8-36f17581b7a3",
+                            Name = "Student",
+                            NormalizedName = "Student"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            ConcurrencyStamp = "53fe7090-ffe2-412a-b4ed-b625ccc52d2e",
                             Name = "Patient",
                             NormalizedName = "Patient"
                         });
@@ -168,6 +156,22 @@ namespace Core.DomainServices.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "522546b4-9c40-497d-a4d8-1326daa58b27",
+                            Email = "mauricederidder@outlook.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PasswordHash = "TestPass21",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "7649bb41-8719-4af8-a627-a88c6c71555a",
+                            TwoFactorEnabled = false,
+                            UserName = "Maurice de Ridder"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -229,6 +233,13 @@ namespace Core.DomainServices.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

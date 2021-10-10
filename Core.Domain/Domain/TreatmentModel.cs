@@ -16,7 +16,6 @@ namespace AvansFysioOpdrachtIndividueel.Models
         public bool TreatmentRoomOrTrainingRoom { get; set; }
         [Required]
         public string Complications { get; set; }
-        [Required]
         public PersonModel TreatmentDoneBy { get; set; }
         public DateTime TreatmentTime { get; set; }
     }

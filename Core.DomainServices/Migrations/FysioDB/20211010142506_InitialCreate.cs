@@ -28,7 +28,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AmountOfTreaments = table.Column<int>(type: "int", nullable: false),
-                    TimeOfTreatment = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TimeOfTreatment = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,7 +122,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     TimeOfCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CommentMadeById = table.Column<int>(type: "int", nullable: true),
                     CommentVisibleForPatient = table.Column<bool>(type: "bit", nullable: false),
@@ -153,7 +153,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                     PatientNumber = table.Column<int>(type: "int", nullable: false),
                     TeacherOrStudentNumber = table.Column<int>(type: "int", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PatientDossierId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -180,9 +180,9 @@ namespace Core.DomainServices.Migrations.FysioDB
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VektisType = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     TreatmentRoomOrTrainingRoom = table.Column<bool>(type: "bit", nullable: false),
-                    Complications = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Complications = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TreatmentDoneById = table.Column<int>(type: "int", nullable: true),
                     TreatmentTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PatientDossierModelId = table.Column<int>(type: "int", nullable: true)
@@ -202,6 +202,37 @@ namespace Core.DomainServices.Migrations.FysioDB
                         principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Person",
+                columns: new[] { "Id", "Email", "Name" },
+                values: new object[,]
+                {
+                    { 4, "meesmake@outlook.com", "Mees Maske" },
+                    { 5, "kevin@outlook.com", "Kevin Verhoeven" },
+                    { 1, "mauricederidder@outlook.com", "Maurice de Ridder" },
+                    { 2, "timdelaater@outlook.com", "Tim de Laater" },
+                    { 3, "ricoschouten@outlook.com", "Rico Schouten" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Student",
+                columns: new[] { "Id", "StudentNumber" },
+                values: new object[,]
+                {
+                    { 4, 321 },
+                    { 5, 33421 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Teacher",
+                columns: new[] { "Id", "BIGNumber", "PersonnelNumber" },
+                values: new object[,]
+                {
+                    { 1, 32, 2 },
+                    { 2, 3, 3231 },
+                    { 3, 55, 98721 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -238,6 +269,12 @@ namespace Core.DomainServices.Migrations.FysioDB
                 name: "IX_PatientDossierModel_TreatmentPlanId",
                 table: "PatientDossierModel",
                 column: "TreatmentPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Person_Email",
+                table: "Person",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TreatmentModel_PatientDossierModelId",

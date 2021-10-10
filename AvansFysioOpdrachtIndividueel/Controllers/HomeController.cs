@@ -47,7 +47,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             // Roep view aan en stuur data door naar view
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (user.UserName != null)
+            if (user != null)
             {
                 //TODO:: Find a way to not have to do this?
                 personViewModel.PersonViewModel = new PersonViewModel();
@@ -129,7 +129,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 ModelState.AddModelError("PasswordNull", "Vull aub een wachtwoord in.");
                 return View();
             }
-            if (_patientRepo.Get().Where(p => p.Email == userName).FirstOrDefault() != null)
+            var patient = _patientRepo.Get().Where(p => p.Email == userName).FirstOrDefault();
+            if (patient != null)
             {
                 var result = await _userManager.CreateAsync(user, password);
 

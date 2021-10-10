@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Core.DomainServices.Migrations
 {
-    public partial class User : Migration
+    public partial class UserMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,20 +44,6 @@ namespace Core.DomainServices.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IdentityRole<string>",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityRole<string>", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,14 +153,24 @@ namespace Core.DomainServices.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "IdentityRole<string>",
+                table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "", "Fysiotherapist", "Fysiotherapist" });
+                values: new object[,]
+                {
+                    { "1", "39a1c907-34ad-4535-bf14-75a337528917", "Therapist", "Therapist" },
+                    { "2", "6088cb80-9603-4d03-bbd8-36f17581b7a3", "Student", "Student" },
+                    { "3", "53fe7090-ffe2-412a-b4ed-b625ccc52d2e", "Patient", "Patient" }
+                });
 
             migrationBuilder.InsertData(
-                table: "IdentityRole<string>",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "", "Patient", "Patient" });
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "1", 0, "522546b4-9c40-497d-a4d8-1326daa58b27", "mauricederidder@outlook.com", false, false, null, null, null, "TestPass21", null, false, "7649bb41-8719-4af8-a627-a88c6c71555a", false, "Maurice de Ridder" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "1", "1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -232,9 +228,6 @@ namespace Core.DomainServices.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "IdentityRole<string>");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
