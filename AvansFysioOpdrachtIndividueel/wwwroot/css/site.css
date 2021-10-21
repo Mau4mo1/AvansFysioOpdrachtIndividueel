@@ -10,6 +10,8 @@ a.navbar-brand {
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;
+  margin-top:10px;
+  margin-bottom:10px;
 }
 
 .btn-primary {
@@ -72,4 +74,8 @@ body {
 
 .full-width{
     width:100%;
+}
+
+h2{
+    padding-bottom:15px;
 }

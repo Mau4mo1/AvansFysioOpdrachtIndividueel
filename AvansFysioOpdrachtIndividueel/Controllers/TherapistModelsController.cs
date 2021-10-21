@@ -1,4 +1,5 @@
 ﻿using AvansFysioOpdrachtIndividueel.Models;
+using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,16 +14,16 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 {
     public class TherapistModelsController : Controller
     {
-        private readonly IRepo<PatientModel> _patientRepo;
-        private readonly IRepo<StudentModel> _studentRepo;
-        private readonly IRepo<TeacherModel> _teacherRepo;
+        private readonly IPatientRepo _patientRepo;
+        private readonly ITherapistRepo _therapistRepo;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        public TherapistModelsController(IRepo<PatientModel> repo, IRepo<StudentModel> studentRepo, IRepo<TeacherModel> teacherRepo, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public TherapistModelsController(IPatientRepo repo, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ITherapistRepo therapistRepo)
         {
             _patientRepo = repo;
-            _studentRepo = studentRepo;
-            _teacherRepo = teacherRepo;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _therapistRepo = therapistRepo;
         }
         // GET: TherapistModelsController
         [Authorize(Roles = "Therapist")]
@@ -30,40 +31,35 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (user != null)
+            if (user == null)
             {
                 return NotFound();
             }
 
             // Get the therapist that belongs to the user.
             // TODO:: Find a way to get this in one statement
-            PersonModel therapist = _teacherRepo.Get().Where(t => t.Email == user.Email).FirstOrDefault();
-            if (therapist == null)
-            {
-                therapist = _studentRepo.Get().Where(t => t.Email == user.Email).FirstOrDefault();
-            }
-            // Find all patients that belong to this therapist and that have a treatment today.
+            PersonModel therapist = _therapistRepo.Get().Where(t => t.Email == user.Email).FirstOrDefault();
+
             List<PatientModel> patients = _patientRepo.Get();
-            List<PatientTreatmentViewModel> viewModel = new List<PatientTreatmentViewModel>();
-            // TODO:: is there a better way to do this?
+            List<TreatmentViewModel> viewModel = new List<TreatmentViewModel>();
 
             // now get the therapist.
             foreach (PatientModel pat in patients)
             {
+                // Find all treatments that belong to this therapist and that have a treatment today.
                 List<TreatmentModel> treatmentModels = pat.PatientDossier.Treatments.
                     Where(t => t.TreatmentDoneBy.Id == therapist.Id && t.TreatmentTime.Date == DateTime.Today.Date).ToList();
-                if (treatmentModels.Count > 0)
+                foreach (var treatment in treatmentModels)
                 {
-                    viewModel.Add(new PatientTreatmentViewModel
+                    viewModel.Add(new TreatmentViewModel
                     {
                         Name = pat.Name,
-                        Id = pat.Id,
-                        Treatments = treatmentModels
+                        treatment = treatment
                     });
                 }
             }
-
-            return View();
+            
+            return View(viewModel.OrderBy(t => t.treatment.TreatmentTime));
         }
 
         // The ID here should be the ID of the therapist.

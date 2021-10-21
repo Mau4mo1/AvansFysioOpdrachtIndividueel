@@ -4,21 +4,19 @@ using AvansFysioOpdrachtIndividueel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Core.DomainServices.Migrations.FysioDB
 {
     [DbContext(typeof(FysioDBContext))]
-    [Migration("20211010142506_InitialCreate")]
-    partial class InitialCreate
+    partial class FysioDBContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.CommentModel", b =>
@@ -207,9 +205,16 @@ namespace Core.DomainServices.Migrations.FysioDB
                     b.ToTable("Patient");
                 });
 
-            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+            modelBuilder.Entity("Core.Domain.Domain.TherapistModel", b =>
                 {
                     b.HasBaseType("AvansFysioOpdrachtIndividueel.Models.PersonModel");
+
+                    b.ToTable("Therapist");
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+                {
+                    b.HasBaseType("Core.Domain.Domain.TherapistModel");
 
                     b.Property<int>("StudentNumber")
                         .HasColumnType("int");
@@ -235,7 +240,7 @@ namespace Core.DomainServices.Migrations.FysioDB
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TeacherModel", b =>
                 {
-                    b.HasBaseType("AvansFysioOpdrachtIndividueel.Models.PersonModel");
+                    b.HasBaseType("Core.Domain.Domain.TherapistModel");
 
                     b.Property<int>("BIGNumber")
                         .HasColumnType("int");
@@ -340,9 +345,18 @@ namespace Core.DomainServices.Migrations.FysioDB
                     b.Navigation("PatientDossier");
                 });
 
-            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+            modelBuilder.Entity("Core.Domain.Domain.TherapistModel", b =>
                 {
                     b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Domain.Domain.TherapistModel", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.StudentModel", b =>
+                {
+                    b.HasOne("Core.Domain.Domain.TherapistModel", null)
                         .WithOne()
                         .HasForeignKey("AvansFysioOpdrachtIndividueel.Models.StudentModel", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -351,7 +365,7 @@ namespace Core.DomainServices.Migrations.FysioDB
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.TeacherModel", b =>
                 {
-                    b.HasOne("AvansFysioOpdrachtIndividueel.Models.PersonModel", null)
+                    b.HasOne("Core.Domain.Domain.TherapistModel", null)
                         .WithOne()
                         .HasForeignKey("AvansFysioOpdrachtIndividueel.Models.TeacherModel", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)

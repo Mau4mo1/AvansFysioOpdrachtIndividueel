@@ -28,7 +28,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AmountOfTreaments = table.Column<int>(type: "int", nullable: false),
-                    TimeOfTreatment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TimeOfTreatment = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -36,36 +36,16 @@ namespace Core.DomainServices.Migrations.FysioDB
                 });
 
             migrationBuilder.CreateTable(
-                name: "Student",
+                name: "Therapist",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    StudentNumber = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Student", x => x.Id);
+                    table.PrimaryKey("PK_Therapist", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Student_Person_Id",
-                        column: x => x.Id,
-                        principalTable: "Person",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Teacher",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    BIGNumber = table.Column<int>(type: "int", nullable: false),
-                    PersonnelNumber = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teacher", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Teacher_Person_Id",
+                        name: "FK_Therapist_Person_Id",
                         column: x => x.Id,
                         principalTable: "Person",
                         principalColumn: "Id",
@@ -112,6 +92,43 @@ namespace Core.DomainServices.Migrations.FysioDB
                         name: "FK_PatientDossierModel_TreatmentPlanModel_TreatmentPlanId",
                         column: x => x.TreatmentPlanId,
                         principalTable: "TreatmentPlanModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    StudentNumber = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Student", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Student_Therapist_Id",
+                        column: x => x.Id,
+                        principalTable: "Therapist",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teacher",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    BIGNumber = table.Column<int>(type: "int", nullable: false),
+                    PersonnelNumber = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teacher", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teacher_Therapist_Id",
+                        column: x => x.Id,
+                        principalTable: "Therapist",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -174,7 +191,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                 });
 
             migrationBuilder.CreateTable(
-                name: "TreatmentModel",
+                name: "Treatment",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -185,19 +202,20 @@ namespace Core.DomainServices.Migrations.FysioDB
                     Complications = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TreatmentDoneById = table.Column<int>(type: "int", nullable: true),
                     TreatmentTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TreatmentUntil = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PatientDossierModelId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TreatmentModel", x => x.Id);
+                    table.PrimaryKey("PK_Treatment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TreatmentModel_PatientDossierModel_PatientDossierModelId",
+                        name: "FK_Treatment_PatientDossierModel_PatientDossierModelId",
                         column: x => x.PatientDossierModelId,
                         principalTable: "PatientDossierModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TreatmentModel_Person_TreatmentDoneById",
+                        name: "FK_Treatment_Person_TreatmentDoneById",
                         column: x => x.TreatmentDoneById,
                         principalTable: "Person",
                         principalColumn: "Id",
@@ -214,6 +232,18 @@ namespace Core.DomainServices.Migrations.FysioDB
                     { 1, "mauricederidder@outlook.com", "Maurice de Ridder" },
                     { 2, "timdelaater@outlook.com", "Tim de Laater" },
                     { 3, "ricoschouten@outlook.com", "Rico Schouten" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Therapist",
+                column: "Id",
+                values: new object[]
+                {
+                    4,
+                    5,
+                    1,
+                    2,
+                    3
                 });
 
             migrationBuilder.InsertData(
@@ -277,13 +307,13 @@ namespace Core.DomainServices.Migrations.FysioDB
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TreatmentModel_PatientDossierModelId",
-                table: "TreatmentModel",
+                name: "IX_Treatment_PatientDossierModelId",
+                table: "Treatment",
                 column: "PatientDossierModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TreatmentModel_TreatmentDoneById",
-                table: "TreatmentModel",
+                name: "IX_Treatment_TreatmentDoneById",
+                table: "Treatment",
                 column: "TreatmentDoneById");
         }
 
@@ -302,7 +332,10 @@ namespace Core.DomainServices.Migrations.FysioDB
                 name: "Teacher");
 
             migrationBuilder.DropTable(
-                name: "TreatmentModel");
+                name: "Treatment");
+
+            migrationBuilder.DropTable(
+                name: "Therapist");
 
             migrationBuilder.DropTable(
                 name: "PatientDossierModel");

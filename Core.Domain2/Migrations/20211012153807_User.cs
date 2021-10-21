@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Core.DomainServices.Migrations
 {
-    public partial class UserMigration : Migration
+    public partial class User : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -157,15 +157,15 @@ namespace Core.DomainServices.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1", "39a1c907-34ad-4535-bf14-75a337528917", "Therapist", "Therapist" },
-                    { "2", "6088cb80-9603-4d03-bbd8-36f17581b7a3", "Student", "Student" },
-                    { "3", "53fe7090-ffe2-412a-b4ed-b625ccc52d2e", "Patient", "Patient" }
+                    { "1", "8d264aad-331a-43b7-ab6f-8fa5cfc1f0b7", "Therapist", "Therapist" },
+                    { "2", "56fcccf8-6f78-4748-a905-59466e3e10fd", "Student", "Student" },
+                    { "3", "43fe4aee-c800-4733-a4aa-efc3fc6681fb", "Patient", "Patient" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "522546b4-9c40-497d-a4d8-1326daa58b27", "mauricederidder@outlook.com", false, false, null, null, null, "TestPass21", null, false, "7649bb41-8719-4af8-a627-a88c6c71555a", false, "Maurice de Ridder" });
+                values: new object[] { "1", 0, "156f4b52-abc3-4d7e-b641-7c6a562a254b", "mauricederidder@outlook.com", false, false, null, null, null, "AQAAAAEAACcQAAAAEAgr4aS113A0VSOXAzNOZ9fhGyJLmAxIlQYg/s4pVQe4xd0HXq2Lb5nAXOR/3AZtKg==", null, false, "fe4f7eb4-3071-4001-ad58-4ae92892d7ab", false, "mauricederidder@outlook.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

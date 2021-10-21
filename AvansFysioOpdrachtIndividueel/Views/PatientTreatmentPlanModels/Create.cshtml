@@ -1,0 +1,27 @@
+﻿@model TreatmentPlanModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Voeg een behandelplan toe</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+                <div asp-validation-summary="All"></div>
+                <div class="form-group">
+                    <label asp-for="AmountOfTreaments">Hoe vaak mag de patient een afspraak maken?</label>
+                    <input class="form-control" asp-for="AmountOfTreaments" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimeOfTreatment">Hoe lang mogen de behandelingen duren?</label>
+                    <input class="form-control" asp-for="TimeOfTreatment" />
+                </div>
+                <button class="btn btn-primary" type="submit">Behandelplan toevoegen</button>
+            </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

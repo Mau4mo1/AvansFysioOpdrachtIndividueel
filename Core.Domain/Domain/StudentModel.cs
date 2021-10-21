@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Domain.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AvansFysioOpdrachtIndividueel.Models
 {
-    public class StudentModel : PersonModel
+    public class StudentModel : TherapistModel
     {
         [Required]
         public int StudentNumber { get; set; }

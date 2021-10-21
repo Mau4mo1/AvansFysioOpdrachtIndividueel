@@ -1,4 +1,5 @@
 ﻿using AvansFysioOpdrachtIndividueel.Models;
+using Core.DomainServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,14 @@ namespace AvansFysioOpdrachtIndividueel.ViewComponents
     [ViewComponent(Name = "PatientCount")]
     public class PatientCountComponent : ViewComponent
     {
-        IRepo<PatientModel> _repo;
-        public PatientCountComponent(IRepo<PatientModel> _repo)
+        IPatientRepo _repo;
+        public PatientCountComponent(IPatientRepo _repo)
         {
             this._repo = _repo;
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            ViewBag.PatientCount = _repo.Get().ToList().Count;
+            ViewBag.PatientCount =  _repo.Get().ToList().Count;
 
             return View("PatientCount");
         }

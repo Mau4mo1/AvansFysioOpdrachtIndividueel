@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Core.Data.Data;
+using Core.Domain.Domain;
+using Core.DomainServices;
 
 namespace AvansFysioOpdrachtIndividueel
 {
@@ -24,6 +26,7 @@ namespace AvansFysioOpdrachtIndividueel
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -35,10 +38,13 @@ namespace AvansFysioOpdrachtIndividueel
             services.AddControllersWithViews();
             // Dependency Injection
             services.AddDbContext<FysioDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            services.AddScoped<IRepo<PatientModel>, SQLPatientRepo>();
-            services.AddScoped<IRepo<TeacherModel>, SQLTeacherRepo>();
-            services.AddScoped<IRepo<StudentModel>, SQLStudentRepo>();
+            services.AddScoped<IPatientRepo, SQLPatientRepo>();
+            services.AddScoped<ITherapistRepo,SQLTherapistRepo>();
+            services.AddScoped<IRepo<TreatmentModel>, SQLTreatmentRepo>();
+            services.AddScoped<IRepo<PersonModel>, SQLPersonRepo>();
+            services.AddScoped<ITreatmentManager, SQLTreatmentManager>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAsyncRepo<DiagnosisModel>, RestApiDiagnosisRepo>();
             // Authorization
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("User")));
             services.AddAuthentication("CookieAuth")
@@ -86,8 +92,6 @@ namespace AvansFysioOpdrachtIndividueel
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-
 
             app.UseRouting();
 

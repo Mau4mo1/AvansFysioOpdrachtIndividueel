@@ -12,6 +12,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
         [Required]
         public int AmountOfTreaments { get; set; }
         [Required]
-        public string TimeOfTreatment { get; set; }
+        // Time in minutes (120 = 2 hours)
+        public int TimeOfTreatment { get; set; }
     }
 }

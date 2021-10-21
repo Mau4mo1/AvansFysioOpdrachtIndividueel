@@ -1,5 +1,6 @@
 ﻿using AvansFysioOpdrachtIndividueel.Data;
 using AvansFysioOpdrachtIndividueel.Models;
+using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +18,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IRepo<PatientModel> _patientRepo;
+        private readonly IPatientRepo _patientRepo;
         private readonly FysioDBContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -25,7 +26,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         #region Home
         public HomeController(
             ILogger<HomeController> logger,
-            IRepo<PatientModel> patientRepo,
+            IPatientRepo patientRepo,
             FysioDBContext context,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager
@@ -36,6 +37,8 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
+
+            UserDBInitialiser.SeedUsers(_userManager);
         }
         // Komt een verzoek binnen vanuit de index
         public async Task<ViewResult> Index()
@@ -91,9 +94,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         public async Task<IActionResult> Login(string userName, string password)
         {
             // TODO:: Find better way
-
-
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByEmailAsync(userName);
             if (user != null)
             {
                 // sign in
@@ -103,9 +104,10 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-            }
 
-            return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, signInResult.ToString());
+            }
+            return View();
         }
         public IActionResult Register()
         {
@@ -126,7 +128,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             //}
             if (password == null)
             {
-                ModelState.AddModelError("PasswordNull", "Vull aub een wachtwoord in.");
+                ModelState.AddModelError("PasswordNull", "Vul aub een wachtwoord in.");
                 return View();
             }
             var patient = _patientRepo.Get().Where(p => p.Email == userName).FirstOrDefault();

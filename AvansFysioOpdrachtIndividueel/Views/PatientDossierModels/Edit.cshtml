@@ -1,0 +1,88 @@
+﻿@model AvansFysioOpdrachtIndividueel.Models.PatientDossierDetailsViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@Model.Name's Patienten Dossier</h1>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <div asp-validation-summary="All"></div>
+    <div class="form-group">
+        <label asp-for="@Model.IssueDescription">Het probleem:</label>
+        <input class="form-control" asp-for="@Model.IssueDescription" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.DiagnosisCode">Diagnose code:</label>
+         <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.DiagnosisCode"
+                asp-items="@Model.DiagnosisCodes">
+            @if (Model.DiagnosisCode != null)
+            {
+                <option value="@Model.DiagnosisCode">@Model.DiagnosisCode</option>
+            }
+            else
+            {
+                <option>Selecteer een optie</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.SupervisedById">Intake gesupervised door:</label>
+        <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.SupervisedById"
+                asp-items="@Model.Therapists">
+            @if (Model.IntakeSupervisedBy != null)
+            {
+                <option value="@Model.IntakeSupervisedBy.Id">@Model.IntakeSupervisedBy.Name</option>
+            }
+            else
+            {
+                <option>Selecteer een optie</option>
+            }
+        </select>
+        <label asp-for="@Model.TherapistId">Therapuit:</label>
+        <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.TherapistId"
+                asp-items="@Model.Therapists">
+            @if (@Model.Therapist != null)
+            {
+                <option value="@Model.Therapist.Id">
+                    @Model.Therapist.Name
+                </option>
+            }
+            else
+            {
+                <option>
+                    Selecteer een optie
+                </option>
+            }
+        </select>
+        <label asp-for="@Model.IntakeDoneById">Intake gedaan door:</label>
+        <select class="form-control form-select form-select-lg mb-3" asp-for="@Model.IntakeDoneById"
+                asp-items="@Model.Therapists">
+            @if (@Model.IntakeDoneBy != null)
+            {
+                <option value="@Model.IntakeDoneBy.Id">
+                    @Model.IntakeDoneBy.Name
+                </option>
+            }
+            else
+            {
+                <option>
+                    Selecteer een optie
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.PlannedDate">Wanneer wordt @Model.Name gehlopen:</label>
+        <input class="form-control" asp-for="@Model.PlannedDate" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.DueDate">Tot wanneer krijgt @Model.Name hulp:</label>
+        <input class="form-control" asp-for="@Model.DueDate" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Client toevoegen</button>
+</form>

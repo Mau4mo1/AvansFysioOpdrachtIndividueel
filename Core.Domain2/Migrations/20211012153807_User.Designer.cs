@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.DomainServices.Migrations
 {
     [DbContext(typeof(UserDBContext))]
-    [Migration("20211010141402_UserMigration")]
-    partial class UserMigration
+    [Migration("20211012153807_User")]
+    partial class User
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,21 +51,21 @@ namespace Core.DomainServices.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "39a1c907-34ad-4535-bf14-75a337528917",
+                            ConcurrencyStamp = "8d264aad-331a-43b7-ab6f-8fa5cfc1f0b7",
                             Name = "Therapist",
                             NormalizedName = "Therapist"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "6088cb80-9603-4d03-bbd8-36f17581b7a3",
+                            ConcurrencyStamp = "56fcccf8-6f78-4748-a905-59466e3e10fd",
                             Name = "Student",
                             NormalizedName = "Student"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "53fe7090-ffe2-412a-b4ed-b625ccc52d2e",
+                            ConcurrencyStamp = "43fe4aee-c800-4733-a4aa-efc3fc6681fb",
                             Name = "Patient",
                             NormalizedName = "Patient"
                         });
@@ -164,15 +164,15 @@ namespace Core.DomainServices.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "522546b4-9c40-497d-a4d8-1326daa58b27",
+                            ConcurrencyStamp = "156f4b52-abc3-4d7e-b641-7c6a562a254b",
                             Email = "mauricederidder@outlook.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "TestPass21",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAgr4aS113A0VSOXAzNOZ9fhGyJLmAxIlQYg/s4pVQe4xd0HXq2Lb5nAXOR/3AZtKg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7649bb41-8719-4af8-a627-a88c6c71555a",
+                            SecurityStamp = "fe4f7eb4-3071-4001-ad58-4ae92892d7ab",
                             TwoFactorEnabled = false,
-                            UserName = "Maurice de Ridder"
+                            UserName = "mauricederidder@outlook.com"
                         });
                 });
 

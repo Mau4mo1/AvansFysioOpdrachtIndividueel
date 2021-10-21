@@ -23,12 +23,12 @@ namespace Core.Data.Data
 
         public List<TreatmentModel> Get()
         {
-            throw new NotImplementedException();
+            return _context.treatments.ToList();
         }
 
         public TreatmentModel Get(int id)
         {
-            return _context.patients.Find(id).PatientDossier.Treatments.Find(x => x.Id == id);
+            return _context.treatments.Find(id);
         }
 
         public TreatmentModel Get(TreatmentModel entity)

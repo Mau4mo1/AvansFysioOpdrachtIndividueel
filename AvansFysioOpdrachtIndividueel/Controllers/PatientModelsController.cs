@@ -8,25 +8,30 @@ using Microsoft.EntityFrameworkCore;
 using AvansFysioOpdrachtIndividueel.Data;
 using AvansFysioOpdrachtIndividueel.Models;
 using Microsoft.AspNetCore.Authorization;
+using Core.Domain.Domain;
+using Core.DomainServices;
+using Microsoft.AspNetCore.Identity;
 
 namespace AvansFysioOpdrachtIndividueel.Controllers
 {
     public class PatientModelsController : Controller
     {
         private readonly FysioDBContext _context;
-        private readonly IRepo<PatientModel> _patientRepo;
-        private readonly IRepo<StudentModel> _studentRepo;
-        private readonly IRepo<TeacherModel> _teacherRepo;
-        public PatientModelsController(FysioDBContext context, IRepo<PatientModel> repo, IRepo<TeacherModel> teacherRepo, IRepo<StudentModel> studentRepo)
+        private readonly IPatientRepo _patientRepo;
+        private readonly ITherapistRepo _therapistRepo;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRepo<PersonModel> _personRepo;
+        public PatientModelsController(FysioDBContext context, IPatientRepo repo, ITherapistRepo therapistRepo, UserManager<IdentityUser> userManager, IRepo<PersonModel> personRepo)
         {
             _context = context;
             _patientRepo = repo;
-            _studentRepo = studentRepo;
-            _teacherRepo = teacherRepo;
+            _therapistRepo = therapistRepo;
+            _userManager = userManager;
+            _personRepo = personRepo;
         }
 
         // GET: PatientModels
-        [Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient,Therapist")]
         public IActionResult Index()
         {
             return View(_patientRepo.Get().ToList());
@@ -61,6 +66,11 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 patientModel.PatientDossier = new PatientDossierModel();
                 patientModel.PatientDossier.ExtraComments = new List<CommentModel>();
+                if(_personRepo.Get().Where(t => t.Email == patientModel.Email).ToList().Count > 0)
+                {
+                    ModelState.AddModelError(String.Empty, "De email bestaat al.");
+                    return View();
+                }
                 _patientRepo.Create(patientModel);
                 return RedirectToAction(nameof(Index));
             }
@@ -96,22 +106,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(patientModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PatientModelExists(patientModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _patientRepo.Update(patientModel,id);
                 return RedirectToAction(nameof(Index));
             }
             return View(patientModel);
@@ -144,117 +139,21 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool PatientModelExists(int id)
-        {
-            return _context.patients.Any(e => e.Id == id);
-        }
-
-        public IActionResult AddDossier(PatientDossierViewModel model, int id)
-        {
-
-            PatientModel patientModel = _patientRepo.Get(id);
-            patientModel.PatientDossier.PlannedDate = model.PatientModel.PatientDossier.PlannedDate;
-            patientModel.PatientDossier.DueDate = model.PatientModel.PatientDossier.DueDate;
-            patientModel.PatientDossier.ExtraComments = model.PatientModel.PatientDossier.ExtraComments;
-            patientModel.PatientDossier.IssueDescription = model.PatientModel.PatientDossier.IssueDescription;
-            patientModel.PatientDossier.DiagnosisCode = model.PatientModel.PatientDossier.DiagnosisCode;
-
-            // TODO:: Find a better way? Right now it checks if the intake helpers are a student of a therapist. 
-            if (CheckIfTeacher(model.IntakeDoneById) == true)
-            {
-                patientModel.PatientDossier.IntakeDoneBy = _teacherRepo.Get(model.IntakeDoneById);
-            }
-            else
-            {
-                patientModel.PatientDossier.IntakeDoneBy = _studentRepo.Get(model.IntakeDoneById);
-            }
-            if (CheckIfTeacher(model.SupervisedById) == true)
-            {
-                patientModel.PatientDossier.IntakeSupervisedBy = _teacherRepo.Get(model.SupervisedById);
-            }
-            else
-            {
-                patientModel.PatientDossier.IntakeSupervisedBy = _studentRepo.Get(model.SupervisedById);
-            }
-            if (CheckIfTeacher(model.TherapistId) == true)
-            {
-                patientModel.PatientDossier.Therapist = _teacherRepo.Get(model.TherapistId);
-            }
-            else
-            {
-                patientModel.PatientDossier.Therapist = _studentRepo.Get(model.TherapistId);
-            }
-
-            _patientRepo.Update(patientModel, id);
-            return RedirectToAction("Details", new { id });
-            
-        }
-        public IActionResult AddTreatment(PatientDossierViewModel model, int id)
-        {
-            PatientModel patientModel = _patientRepo.Get(id);
-            if (!ModelState.IsValid)
-            {
-                return View("Details", FillPatientDossierViewModel(id));
-            }
-            if (patientModel.PatientDossier.Treatments == null)
-            {
-                patientModel.PatientDossier.Treatments = new List<TreatmentModel>();
-            }
-            if (CheckIfTeacher(model.TreatmentDoneById) == true)
-            {
-                model.TreatmentModel.TreatmentDoneBy = _teacherRepo.Get(model.TreatmentDoneById);
-            }
-            else
-            {
-                model.TreatmentModel.TreatmentDoneBy = _studentRepo.Get(model.TreatmentDoneById);
-            }
-            
-            patientModel.PatientDossier.Treatments.Add(model.TreatmentModel);
-
-            _patientRepo.Update(patientModel, id);
-
-            // TODO:: find out if there is a better way to do this
-            return RedirectToAction("Details", new { id });
-        }
-
-        // TODO:: Maybe refactor to different controller
-
-        public IActionResult RemoveTreatment(int dossierId, int treatmentId, int id)
-        {
-            PatientModel patientModel = _patientRepo.Get(id);
-            patientModel.PatientDossier.Treatments.Remove(patientModel.PatientDossier.Treatments.Find(x => x.Id == treatmentId));
-
-            _patientRepo.Update(patientModel, dossierId);
-            return RedirectToAction("Details", new { id });
-        }
-        // TODO:: Definetly find a way to not need this function anymore
-        public bool CheckIfTeacher(int id)
-        {
-            var isTeacher = _teacherRepo.Get(id);
-
-            if (isTeacher != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public IActionResult AddComment(int id,PatientDossierViewModel patientDossierViewModel)
+        public async Task<IActionResult> AddComment(int id,PatientDossierViewModel patientDossierViewModel)
         {
             if (ModelState.IsValid)
             {
                 PatientModel patientModel = _patientRepo.Get(id);
-                // TODO:: change this to the current logged in user.
-                patientDossierViewModel.Comment.CommentMadeBy = _patientRepo.Get(id);
+
+                // Gets and sets the currently logged in user to the author.
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                patientDossierViewModel.Comment.CommentMadeBy = _therapistRepo.Get().Where(p => p?.Email == user?.UserName).FirstOrDefault();
+
                 patientDossierViewModel.Comment.TimeOfCreation = DateTime.Now;
                 patientModel.PatientDossier.ExtraComments.Add(patientDossierViewModel.Comment);
 
 
-                _patientRepo.Update(patientModel, id);
+                _patientRepo.UpdatePatientDossier(patientModel, id);
 
                 return RedirectToAction("Details", new { id });
             }
@@ -274,23 +173,12 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             // For this we need a therapist repo
             // TODO:: Find a better way to convert these 2 lists into personmodels..
 
-            List<TeacherModel> teacherModels = _teacherRepo.Get();
-            patientModel.Therapists = new List<SelectListItem>();
-            foreach (var teacherModel in teacherModels)
-            {
-                patientModel.Therapists.Add(new SelectListItem { Text = teacherModel.Name, Value = teacherModel.Id.ToString() });
-            }
-
-            List<StudentModel> studentModels = _studentRepo.Get();
-
-            foreach (var studentModel in studentModels)
-            {
-                patientModel.Therapists.Add(new SelectListItem { Text = studentModel.Name, Value = studentModel.Id.ToString() });
-            }
+            patientModel.Therapists = _therapistRepo.GetTherapists();
 
             try
             {
                 patientModel.TreatmentModels = _patientRepo.Get(id).PatientDossier.Treatments.ToList();
+                
             }
             catch (Exception)
             {

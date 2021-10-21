@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AvansFysioOpdrachtIndividueel.Models
 {
-    public class PatientModel : PersonModel
+    public class PatientModel : PersonModel,IValidatableObject
     {
         public int PatientNumber { get; set; }
         [Required]
@@ -27,6 +26,15 @@ namespace AvansFysioOpdrachtIndividueel.Models
             PatientNumber = patientNumber;
             DateOfBirth = dateOfBirth;
             Gender = gender;
+        }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> errors = new List<ValidationResult>();
+            if ((DateTime.Now.Year - DateOfBirth.Date.Year ) < 16)
+            {
+                errors.Add(new ValidationResult("Patient moet ouder dan 16 zijn."));
+            }
+            return errors;
         }
 
         //public PatientModel(int patientNumber, DateTime dateOfBirth, string gender, string name, string email) : base(name, email)
