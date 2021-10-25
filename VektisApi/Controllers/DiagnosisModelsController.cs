@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AvansFysioOpdrachtIndividueel.Models;
+using Core.Domain.Domain;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +13,27 @@ namespace VektisApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DiagnosisDTOController : ControllerBase
+    public class DiagnosisModelsController : ControllerBase
     {
-        public CSVConverter _diagnosis;
-        public DiagnosisDTOController()
+        private readonly IRepo<DiagnosisModel> _diagnosisRepo;
+        public DiagnosisModelsController( IRepo<DiagnosisModel> diagnosisRepo)
         {
-            _diagnosis = new CSVConverter();
+            _diagnosisRepo = diagnosisRepo;
+
         }
         // GET: api/<DiagnosisDTOController>
         [HttpGet]
-        public List<DiagnosisDTO> Get()
+        public List<DiagnosisModel> Get()
         {
-            return _diagnosis.DiagnosisContainerDTO.Diagnosis;
+            return _diagnosisRepo.Get();
+          //  return _diagnosis.DiagnosisContainerDTO.Diagnosis;
         }
 
-        // GET api/<DiagnosisDTOController>/5
+        // get api/<diagnosisdtocontroller>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public DiagnosisModel Get(int id)
         {
-            return "value";
+            return _diagnosisRepo.Get(id);
         }
 
         // POST api/<DiagnosisDTOController>

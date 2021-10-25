@@ -1,4 +1,4 @@
-﻿using AvansFysioOpdrachtIndividueel.Data;
+﻿
 using AvansFysioOpdrachtIndividueel.Models;
 using Core.DomainServices;
 using FluentDateTime;
@@ -49,12 +49,20 @@ namespace Core.Data.Data
             var monday = treatment.TreatmentTime.Previous(DayOfWeek.Monday);
             var sunday = treatment.TreatmentTime.Next(DayOfWeek.Sunday);
             // Take the time between the start of the week and end of the week and all treatments that are between that time will be selected.
-            var treatmentsThisWeek = patient.PatientDossier.Treatments.Where(t => t.TreatmentTime.Day >= monday.Day && t.TreatmentTime.Day <= sunday.Day).ToList();
-            // Check if the patient has more than the maximum allowed treatment amount + 1 because we will add one more treatment after.
-            if ((patient.PatientDossier.Treatments.Count + 1) > (patient.PatientDossier.TreatmentPlan.AmountOfTreaments))
+            try
             {
-                return false;
+                var treatmentsThisWeek = patient.PatientDossier.Treatments.Where(t => t.TreatmentTime.Day >= monday.Day && t.TreatmentTime.Day <= sunday.Day).ToList();
+                // Check if the patient has more than the maximum allowed treatment amount + 1 because we will add one more treatment after.
+                if ((patient.PatientDossier.Treatments.Count + 1) > (patient.PatientDossier.TreatmentPlan.AmountOfTreaments))
+                {
+                    return false;
+                }
             }
+            catch (Exception ex)
+            {
+                return true;
+            }
+            
 
             return true;
         }

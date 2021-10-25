@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VektisApi.DomainDTO;
+using Core.ApiInfrastructure;
+using Core.Domain.Domain;
+using AvansFysioOpdrachtIndividueel.Models;
 
 namespace VektisApi
 {
@@ -11,10 +14,10 @@ namespace VektisApi
     // Dit is een zelfgeschreven CSV converter die het bestand ophaald en het in lokale storage zet.
     public class CSVConverter
     {
-        public DiagnosisContainerDTO DiagnosisContainerDTO { get;}
-        public CSVConverter()
+        private IRepo<DiagnosisModel> _diagnosisRepo;
+        public CSVConverter(IRepo<DiagnosisModel> diagnosisRepo)
         {
-            DiagnosisContainerDTO = new DiagnosisContainerDTO();
+            _diagnosisRepo = diagnosisRepo;
             loadFile();
         }
         public void loadFile()
@@ -61,7 +64,7 @@ namespace VektisApi
             {
                 if(i > 3)
                 {
-                    DiagnosisDTO diagnosis = new DiagnosisDTO();
+                    DiagnosisModel diagnosis = new DiagnosisModel();
                     try
                     {
                         diagnosis.CodeAndDescription = result[2];
@@ -79,7 +82,7 @@ namespace VektisApi
                     {
                         diagnosis.CodeAndDescription = " N/A";
                     }
-                    DiagnosisContainerDTO.Diagnosis.Add(diagnosis);
+                    _diagnosisRepo.Create(diagnosis);
                 }
                 i++;
             }

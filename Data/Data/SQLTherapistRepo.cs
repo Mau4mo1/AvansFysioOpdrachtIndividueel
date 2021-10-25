@@ -1,5 +1,4 @@
-﻿using AvansFysioOpdrachtIndividueel.Data;
-using AvansFysioOpdrachtIndividueel.Models;
+﻿using AvansFysioOpdrachtIndividueel.Models;
 using Core.Domain.Domain;
 using Core.DomainServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,7 +19,7 @@ namespace Core.Data.Data
 
         public void Create(TherapistModel entity)
         {
-            throw new NotImplementedException();
+            _context.therapists.Add(entity);
         }
         public List<SelectListItem> GetTherapists()
         {

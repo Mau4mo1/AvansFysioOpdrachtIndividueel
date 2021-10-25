@@ -14,7 +14,7 @@ namespace Core.Data.Data
     public class RestApiDiagnosisRepo : IAsyncRepo<DiagnosisModel>
     {
         private static readonly HttpClient client = new HttpClient();
-        private static readonly string baseUrl = "https://localhost:44384/api/DiagnosisDTO";
+        private static readonly string baseUrl = "https://localhost:44384/api/DiagnosisModels";
 
         public async Task<List<DiagnosisModel>> Get()
         {

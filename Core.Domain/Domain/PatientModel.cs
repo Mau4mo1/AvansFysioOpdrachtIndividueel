@@ -30,7 +30,16 @@ namespace AvansFysioOpdrachtIndividueel.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             List<ValidationResult> errors = new List<ValidationResult>();
-            if ((DateTime.Now.Year - DateOfBirth.Date.Year ) < 16)
+
+            var now = DateTime.Now;
+            int age = now.Year - DateOfBirth.Year;
+
+            if (now.Month < DateOfBirth.Month || (now.Month == DateOfBirth.Month && now.Day < DateOfBirth.Day))
+            {
+                age--;
+            }
+
+            if (age < 16)
             {
                 errors.Add(new ValidationResult("Patient moet ouder dan 16 zijn."));
             }

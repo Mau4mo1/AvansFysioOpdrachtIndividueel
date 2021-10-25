@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace AvansFysioOpdrachtIndividueel
 {
-    class UserDBInitialiser
+    public class UserDBInitialiser
     {
+       
         public static void SeedUsers(UserManager<IdentityUser> userManager)
         {
             // Therapist account
@@ -29,6 +30,7 @@ namespace AvansFysioOpdrachtIndividueel
                     userManager.AddToRoleAsync(user, "Therapist").Wait();
                 }
             }
+
             // Therapist account
             if (userManager.FindByEmailAsync("timdelaater@outlook.com").Result == null)
             {

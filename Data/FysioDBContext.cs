@@ -4,7 +4,7 @@ using Core.DomainServices;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace AvansFysioOpdrachtIndividueel.Data
+namespace Core.Data
 {
     public class FysioDBContext : DbContext
     {
@@ -49,7 +49,7 @@ namespace AvansFysioOpdrachtIndividueel.Data
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+            base.OnConfiguring(optionsBuilder);
             optionsBuilder.EnableSensitiveDataLogging();
         }
 

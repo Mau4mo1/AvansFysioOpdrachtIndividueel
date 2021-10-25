@@ -8,5 +8,6 @@ namespace VektisApi.DomainDTO
     public class DiagnosisDTO
     {
         public string CodeAndDescription { get; set; }
+        public int Code { get; set; }
     }
 }

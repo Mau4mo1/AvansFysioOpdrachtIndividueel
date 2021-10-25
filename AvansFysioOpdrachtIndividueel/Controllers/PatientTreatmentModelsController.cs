@@ -48,6 +48,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         // POST: PatientTreatmentModelsController/Create/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+  
         public ActionResult Create(TreatmentFormViewModel collection, int id)
         {
             if (!ModelState.IsValid)
@@ -55,27 +56,30 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 collection.Therapists = _therapistRepo.GetTherapists();
                 return View(collection);
             }
-            if (!_treatmentManager.IsWithinAllowedTreatmentAmount(id,collection.Treatment))
+
+            if (!_treatmentManager.IsWithinAllowedTreatmentAmount(id, collection.Treatment))
             {
                 ModelState.AddModelError(string.Empty, "Je mag niet meer behandelingen aanmaken dan in je behandelplan staat");
                 collection.Therapists = _therapistRepo.GetTherapists();
                 return View(collection);
             }
+
             PatientModel patientModel = _patientRepo.Get(id);
+
             // Fill in the end of the treatment datetime by taking the treatmentplan TimeOfTreatment in minutes and adding it to the starting treatment time.
             collection.Treatment.TreatmentUntil = collection.Treatment.TreatmentTime.AddMinutes(patientModel.PatientDossier.TreatmentPlan.TimeOfTreatment);
 
-            if (!_treatmentManager.IsTherapistAvailable(collection.TherapyDoneById,collection.Treatment))
+            if (!_treatmentManager.IsTherapistAvailable(collection.TherapyDoneById, collection.Treatment))
             {
                 ModelState.AddModelError(string.Empty, "De therapeut is niet beschikbaar op deze tijd.");
                 collection.Therapists = _therapistRepo.GetTherapists();
                 return View(collection);
             }
-           
+
             collection.Treatment.TreatmentDoneBy = _therapistRepo.Get(collection.TherapyDoneById);
 
             patientModel.PatientDossier.Treatments.Add(collection.Treatment);
-            
+
             _patientRepo.Update(patientModel, id);
 
             return RedirectToAction("Details", "PatientModels", new { id });
@@ -96,7 +100,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         // POST: PatientTreatmentModelsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id,int treatmentId, TreatmentFormViewModel collection)
+        public ActionResult Edit(int id, int treatmentId, TreatmentFormViewModel collection)
         {
             if (!ModelState.IsValid)
             {
@@ -110,16 +114,17 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             var treatment = patient.PatientDossier.Treatments.Find(t => t.Id == treatmentId);
 
             patient.PatientDossier.Treatments.Remove(treatment);
+
             treatment = collection.Treatment;
             treatment.TreatmentDoneBy = _therapistRepo.Get(collection.TherapyDoneById);
 
-            patient.PatientDossier.Treatments.Add(treatment); 
+            patient.PatientDossier.Treatments.Add(treatment);
 
             _patientRepo.Update(patient, id);
 
             return RedirectToAction("Details", "PatientModels", new { id });
-        }        
-        public ActionResult Delete(int id,int treatmentId)
+        }
+        public ActionResult Delete(int id, int treatmentId)
         {
             PatientModel patient = _patientRepo.Get(id);
 
@@ -127,7 +132,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             _patientRepo.Update(patient, id);
             return RedirectToAction("Details", "PatientModels", new { id });
         }
-        
+
 
         //public IActionResult AddTreatment(PatientDossierViewModel model, int id)
         //{

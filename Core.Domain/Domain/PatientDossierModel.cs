@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Domain.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
         // This is the global description of the issue at hand
         public string IssueDescription { get; set; }
         // Diagnosis code and description
-        public string DiagnosisCode { get; set; }
+        public DiagnosisModel DiagnosisCode { get; set; }
         // This is the person that has done the intake for the patient
         public PersonModel IntakeDoneBy { get; set; }
         // This is who supervised the intake

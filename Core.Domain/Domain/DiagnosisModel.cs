@@ -9,7 +9,7 @@ namespace Core.Domain.Domain
 {
     public class DiagnosisModel
     {
-
+        public int Id {  get; set; }
         [JsonPropertyName("codeAndDescription")]
         public string CodeAndDescription { get; set; }
     }

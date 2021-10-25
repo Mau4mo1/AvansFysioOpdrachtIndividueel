@@ -81,8 +81,10 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 patient.PatientDossier.PlannedDate = viewModel.PlannedDate;
                 patient.PatientDossier.DueDate = viewModel.DueDate;
                 patient.PatientDossier.IssueDescription = viewModel.IssueDescription;
-                patient.PatientDossier.DiagnosisCode = viewModel.DiagnosisCode;
-
+                patient.PatientDossier.DiagnosisCode = new DiagnosisModel
+                {
+                    CodeAndDescription = viewModel.DiagnosisCode
+                };
                 _patientRepo.Update(patient, id);
 
                 return RedirectToAction("Details", controllerName: "PatientModels", new { id });
@@ -138,6 +140,10 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 model.DiagnosisCodes.Add(new SelectListItem(item.CodeAndDescription,item.CodeAndDescription));
             }
             
+            if(patientModel.PatientDossier.DiagnosisCode != null)
+            {
+                model.DiagnosisCode = patientModel.PatientDossier.DiagnosisCode.CodeAndDescription;
+            }
 
             return model;
         }

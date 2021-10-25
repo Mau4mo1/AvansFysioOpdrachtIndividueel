@@ -1,12 +1,25 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Core.DomainServices.Migrations.FysioDB
+namespace Core.Data.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "DiagnosisModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CodeAndDescription = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiagnosisModel", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Person",
                 columns: table => new
@@ -59,7 +72,7 @@ namespace Core.DomainServices.Migrations.FysioDB
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IssueDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DiagnosisCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiagnosisCodeId = table.Column<int>(type: "int", nullable: true),
                     IntakeDoneById = table.Column<int>(type: "int", nullable: true),
                     IntakeSupervisedById = table.Column<int>(type: "int", nullable: true),
                     TherapistId = table.Column<int>(type: "int", nullable: true),
@@ -70,6 +83,12 @@ namespace Core.DomainServices.Migrations.FysioDB
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientDossierModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientDossierModel_DiagnosisModel_DiagnosisCodeId",
+                        column: x => x.DiagnosisCodeId,
+                        principalTable: "DiagnosisModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PatientDossierModel_Person_IntakeDoneById",
                         column: x => x.IntakeDoneById,
@@ -281,6 +300,11 @@ namespace Core.DomainServices.Migrations.FysioDB
                 column: "PatientDossierId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatientDossierModel_DiagnosisCodeId",
+                table: "PatientDossierModel",
+                column: "DiagnosisCodeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientDossierModel_IntakeDoneById",
                 table: "PatientDossierModel",
                 column: "IntakeDoneById");
@@ -339,6 +363,9 @@ namespace Core.DomainServices.Migrations.FysioDB
 
             migrationBuilder.DropTable(
                 name: "PatientDossierModel");
+
+            migrationBuilder.DropTable(
+                name: "DiagnosisModel");
 
             migrationBuilder.DropTable(
                 name: "Person");

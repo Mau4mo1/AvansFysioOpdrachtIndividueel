@@ -5,25 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AvansFysioOpdrachtIndividueel.Data;
+
 using AvansFysioOpdrachtIndividueel.Models;
 using Microsoft.AspNetCore.Authorization;
 using Core.Domain.Domain;
 using Core.DomainServices;
 using Microsoft.AspNetCore.Identity;
+using Core.Data;
 
 namespace AvansFysioOpdrachtIndividueel.Controllers
 {
     public class PatientModelsController : Controller
     {
-        private readonly FysioDBContext _context;
         private readonly IPatientRepo _patientRepo;
         private readonly ITherapistRepo _therapistRepo;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IRepo<PersonModel> _personRepo;
-        public PatientModelsController(FysioDBContext context, IPatientRepo repo, ITherapistRepo therapistRepo, UserManager<IdentityUser> userManager, IRepo<PersonModel> personRepo)
+        public PatientModelsController( IPatientRepo repo, ITherapistRepo therapistRepo, UserManager<IdentityUser> userManager, IRepo<PersonModel> personRepo)
         {
-            _context = context;
             _patientRepo = repo;
             _therapistRepo = therapistRepo;
             _userManager = userManager;
@@ -66,13 +65,17 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 patientModel.PatientDossier = new PatientDossierModel();
                 patientModel.PatientDossier.ExtraComments = new List<CommentModel>();
-                if(_personRepo.Get().Where(t => t.Email == patientModel.Email).ToList().Count > 0)
-                {
-                    ModelState.AddModelError(String.Empty, "De email bestaat al.");
-                    return View();
-                }
-                _patientRepo.Create(patientModel);
-                return RedirectToAction(nameof(Index));
+
+                    if (_personRepo.Get().Exists(t => t?.Email == patientModel.Email))
+                    {
+                        ModelState.AddModelError(String.Empty, "De email bestaat al.");
+                        return View();
+                    }
+
+                    _patientRepo.Create(patientModel);
+                    return RedirectToAction(nameof(Index));
+
+                // if it fails that means there are no persons in the database
             }
             return View(patientModel);
         }
@@ -113,15 +116,14 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         }
 
         // GET: PatientModels/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var patientModel = await _context.patients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var patientModel = _patientRepo.Get(id);
             if (patientModel == null)
             {
                 return NotFound();
@@ -134,9 +136,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var patientModel = await _context.patients.FindAsync(id);
-            _context.patients.Remove(patientModel);
-            await _context.SaveChangesAsync();
+            _patientRepo.Remove(id);
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> AddComment(int id,PatientDossierViewModel patientDossierViewModel)

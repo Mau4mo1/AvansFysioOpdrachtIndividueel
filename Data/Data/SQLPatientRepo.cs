@@ -1,4 +1,4 @@
-﻿using AvansFysioOpdrachtIndividueel.Data;
+﻿
 using AvansFysioOpdrachtIndividueel.Models;
 using Core.DomainServices;
 using Microsoft.EntityFrameworkCore;
@@ -62,9 +62,7 @@ namespace Core.Data.Data
         }
         public void Update(PatientModel entity, int id)
         {
-            PatientModel model = entity;
-
-            _context.Update(model);
+            _context.Update(entity);
             _context.SaveChanges();
         }
 

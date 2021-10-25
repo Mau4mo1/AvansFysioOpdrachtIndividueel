@@ -1,5 +1,6 @@
-﻿using AvansFysioOpdrachtIndividueel.Data;
+﻿
 using AvansFysioOpdrachtIndividueel.Models;
+using Core.Data;
 using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -80,7 +81,6 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
         [HttpPost]
         public IActionResult AddPatientDossier(PatientModel patient)
         {
-
             _patientRepo.Create(patient);
             return Redirect("Index");
         }
@@ -121,11 +121,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             {
                 UserName = userName
             };
-            //if (userName == null)
-            //{
-            //    ModelState.AddModelError("UsernameNull", "Vull aub een geldig email adres in.");
-            //    return View();
-            //}
+
             if (password == null)
             {
                 ModelState.AddModelError("PasswordNull", "Vul aub een wachtwoord in.");
