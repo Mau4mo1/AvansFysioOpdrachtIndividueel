@@ -30,11 +30,16 @@ namespace Core.Data.Data
             return _context.patients
                 .Include(patient => patient.PatientDossier)
                     .ThenInclude(patient => patient.Treatments)
+                        .ThenInclude(treatment => treatment.VektisType)
+                .Include(patient => patient.PatientDossier)
+                    .ThenInclude(patient => patient.Treatments)
                         .ThenInclude(treatment => treatment.TreatmentDoneBy)
+                .Include(patient => patient.PatientDossier.DiagnosisCode)
                 .Include(patient => patient.PatientDossier.ExtraComments)
                 .Include(patient => patient.PatientDossier.Therapist)
                 .Include(patient => patient.PatientDossier.IntakeSupervisedBy)
                 .Include(patient => patient.PatientDossier.TreatmentPlan)
+
                 .ToList();
         }
         public PatientModel Get(int id)
@@ -42,7 +47,11 @@ namespace Core.Data.Data
             var patient = _context.patients.Where(x => x.Id == id)
                 .Include(patient => patient.PatientDossier)
                     .ThenInclude(patient => patient.Treatments)
+                        .ThenInclude(treatment => treatment.VektisType)
+                .Include(patient => patient.PatientDossier)
+                    .ThenInclude(patient => patient.Treatments)
                         .ThenInclude(treatment => treatment.TreatmentDoneBy)
+                .Include(patient => patient.PatientDossier.DiagnosisCode)
                 .Include(patient => patient.PatientDossier.ExtraComments)
                 .Include(patient => patient.PatientDossier.Therapist)
                 .Include(patient => patient.PatientDossier.IntakeSupervisedBy)

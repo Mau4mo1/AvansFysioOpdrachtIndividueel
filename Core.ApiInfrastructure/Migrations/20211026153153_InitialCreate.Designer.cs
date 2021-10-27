@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.ApiInfrastructure.Migrations
 {
     [DbContext(typeof(VektisDBContext))]
-    [Migration("20211022170234_InitialCreate")]
+    [Migration("20211026153153_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,24 @@ namespace Core.ApiInfrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("diagnosis");
+                });
+
+            modelBuilder.Entity("Core.Domain.Domain.VektisModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("NeedsDescription")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("vekti");
                 });
 #pragma warning restore 612, 618
         }

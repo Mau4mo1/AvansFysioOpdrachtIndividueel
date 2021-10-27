@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Domain.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
     public class TreatmentModel : IValidatableObject
     {
         public int Id { get; set; }
-        public int VektisType { get; set; }
+        public VektisModel VektisType { get; set; }
         [Required, MaxLength(255)]
         public string Description { get; set; }
         // true is treatment, false is training.

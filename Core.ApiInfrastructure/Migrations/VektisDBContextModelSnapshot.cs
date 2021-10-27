@@ -32,6 +32,24 @@ namespace Core.ApiInfrastructure.Migrations
 
                     b.ToTable("diagnosis");
                 });
+
+            modelBuilder.Entity("Core.Domain.Domain.VektisModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("NeedsDescription")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("vekti");
+                });
 #pragma warning restore 612, 618
         }
     }

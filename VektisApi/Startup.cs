@@ -32,7 +32,9 @@ namespace VektisApi
         {
             services.AddDbContext<VektisDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddScoped<IRepo<DiagnosisModel>, DiagnosisRepo>();
-            services.AddScoped<CSVConverter>();
+            services.AddScoped<IRepo<VektisModel>, VektisRepo>();
+            services.AddScoped<CSVDiagnosisConverter>();
+            services.AddScoped<CSVVektisConverter>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

@@ -12,10 +12,10 @@ namespace VektisApi
 {
 
     // Dit is een zelfgeschreven CSV converter die het bestand ophaald en het in lokale storage zet.
-    public class CSVConverter
+    public class CSVDiagnosisConverter
     {
         private IRepo<DiagnosisModel> _diagnosisRepo;
-        public CSVConverter(IRepo<DiagnosisModel> diagnosisRepo)
+        public CSVDiagnosisConverter(IRepo<DiagnosisModel> diagnosisRepo)
         {
             _diagnosisRepo = diagnosisRepo;
             loadFile();

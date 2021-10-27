@@ -8,6 +8,7 @@ namespace Core.ApiInfrastructure
     {
 
         public DbSet<DiagnosisModel> diagnosis { get; set; }
+        public DbSet<VektisModel> vekti { get; set; }
         public VektisDBContext()
         {
 

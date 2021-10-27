@@ -152,7 +152,6 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 patientDossierViewModel.Comment.TimeOfCreation = DateTime.Now;
                 patientModel.PatientDossier.ExtraComments.Add(patientDossierViewModel.Comment);
 
-
                 _patientRepo.UpdatePatientDossier(patientModel, id);
 
                 return RedirectToAction("Details", new { id });

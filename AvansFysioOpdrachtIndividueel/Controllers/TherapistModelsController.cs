@@ -37,7 +37,6 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
             }
 
             // Get the therapist that belongs to the user.
-            // TODO:: Find a way to get this in one statement
             PersonModel therapist = _therapistRepo.Get().Where(t => t.Email == user.Email).FirstOrDefault();
 
             List<PatientModel> patients = _patientRepo.Get();

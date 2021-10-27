@@ -45,6 +45,7 @@ namespace AvansFysioOpdrachtIndividueel
             services.AddScoped<ITreatmentManager, SQLTreatmentManager>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAsyncRepo<DiagnosisModel>, RestApiDiagnosisRepo>();
+            services.AddScoped<IVektisRepo, RestApiVektisRepo>();
 
             // Authorization
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("User")));

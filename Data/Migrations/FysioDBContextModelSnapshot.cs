@@ -154,7 +154,7 @@ namespace Core.Data.Migrations
                     b.Property<DateTime>("TreatmentUntil")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("VektisType")
+                    b.Property<int?>("VektisTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -162,6 +162,8 @@ namespace Core.Data.Migrations
                     b.HasIndex("PatientDossierModelId");
 
                     b.HasIndex("TreatmentDoneById");
+
+                    b.HasIndex("VektisTypeId");
 
                     b.ToTable("Treatment");
                 });
@@ -197,6 +199,24 @@ namespace Core.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DiagnosisModel");
+                });
+
+            modelBuilder.Entity("Core.Domain.Domain.VektisModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("NeedsDescription")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VektisModel");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>
@@ -352,7 +372,13 @@ namespace Core.Data.Migrations
                         .WithMany()
                         .HasForeignKey("TreatmentDoneById");
 
+                    b.HasOne("Core.Domain.Domain.VektisModel", "VektisType")
+                        .WithMany()
+                        .HasForeignKey("VektisTypeId");
+
                     b.Navigation("TreatmentDoneBy");
+
+                    b.Navigation("VektisType");
                 });
 
             modelBuilder.Entity("AvansFysioOpdrachtIndividueel.Models.PatientModel", b =>

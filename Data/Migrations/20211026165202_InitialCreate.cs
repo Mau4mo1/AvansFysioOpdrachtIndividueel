@@ -49,6 +49,20 @@ namespace Core.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VektisModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NeedsDescription = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VektisModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Therapist",
                 columns: table => new
                 {
@@ -215,7 +229,7 @@ namespace Core.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VektisType = table.Column<int>(type: "int", nullable: false),
+                    VektisTypeId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     TreatmentRoomOrTrainingRoom = table.Column<bool>(type: "bit", nullable: false),
                     Complications = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -237,6 +251,12 @@ namespace Core.Data.Migrations
                         name: "FK_Treatment_Person_TreatmentDoneById",
                         column: x => x.TreatmentDoneById,
                         principalTable: "Person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Treatment_VektisModel_VektisTypeId",
+                        column: x => x.VektisTypeId,
+                        principalTable: "VektisModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -339,6 +359,11 @@ namespace Core.Data.Migrations
                 name: "IX_Treatment_TreatmentDoneById",
                 table: "Treatment",
                 column: "TreatmentDoneById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatment_VektisTypeId",
+                table: "Treatment",
+                column: "VektisTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -363,6 +388,9 @@ namespace Core.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "PatientDossierModel");
+
+            migrationBuilder.DropTable(
+                name: "VektisModel");
 
             migrationBuilder.DropTable(
                 name: "DiagnosisModel");

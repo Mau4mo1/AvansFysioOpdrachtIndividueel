@@ -124,7 +124,7 @@ namespace AvansFysioOpdrachtIndividueel.Controllers
                 Name = patientModel.Name,
                 Id = id,
                 IssueDescription = patientModel.PatientDossier.IssueDescription,
-                //DiagnosisCode = patientModel.PatientDossier.DiagnosisCode,
+                //DiagnosisCode = patientModel.PatientDossier.DiagnosisCode.CodeAndDescription,
                 DueDate = patientModel.PatientDossier.DueDate,
                 PlannedDate = patientModel.PatientDossier.PlannedDate,
                 Therapist = patientModel.PatientDossier.Therapist,

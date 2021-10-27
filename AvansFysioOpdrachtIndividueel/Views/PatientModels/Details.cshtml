@@ -37,7 +37,7 @@
                             <td>@Model.PatientModel.PatientDossier.PlannedDate</td>
                             <td>@Model.PatientModel.PatientDossier.DueDate</td>
                             <td>@Model.PatientModel.PatientDossier.Therapist.Name</td>
-                            <td>@Model.PatientModel.PatientDossier.DiagnosisCode</td>
+                            <td>@Model.PatientModel.PatientDossier.DiagnosisCode.CodeAndDescription</td>
                             <td>@Model.PatientModel.PatientDossier.IntakeDoneBy.Name</td>
                             <td>@Model.PatientModel.PatientDossier.IntakeSupervisedBy.Name</td>
                         </tr>
@@ -93,7 +93,7 @@
                                 <td>@treatment.TreatmentRoomOrTrainingRoom</td>
                                 <td>@treatment.TreatmentTime</td>
                                 <td>@treatment.Description</td>
-                                <td>@treatment.VektisType</td>
+                                <td>@treatment.VektisType.Value</td>
                                 <td>@treatment.TreatmentDoneBy.Name</td>
                                 <td><a asp-action="Delete" class="btn btn-primary" asp-controller="PatientTreatmentModels" asp-route-id="@Model.PatientModel.Id" asp-route-treatmentId="@treatment.Id">Verwijder behandeling </a> </td>
                                 <td><a asp-action="Edit" class="btn btn-primary" asp-controller="PatientTreatmentModels" asp-route-id="@Model.PatientModel.Id" asp-route-treatmentId="@treatment.Id">Bewerk behandeling</a> </td>
