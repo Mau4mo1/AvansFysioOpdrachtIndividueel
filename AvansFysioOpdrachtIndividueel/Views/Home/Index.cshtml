@@ -3,33 +3,111 @@
 }
 @model PersonViewModelLists
 <div class="text-center">
-    <h1>Welcome, log in to see more detailed information!</h1>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <h1>Welcome, log in to see more detailed information!</h1>
+    }
+    else @if(User.IsInRole("Patient"))
+    {
+        <h1>Welcome, @User.Identity.Name!</h1>
 
-    <a asp-action="AddPatient">Add a patient</a>
-
-    <h1>Patient overview:</h1> 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">DateOfBirth</th>
-                <th scope="col">Gender</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-                @foreach (PatientModel patient in (dynamic) Model.PatientModels)
-                {
+        @if (User.IsInRole("Patient"))
+        {
+            <h1>@Model.PersonViewModel.PatientModel.Name's  overview:</h1>
+            <table class="table">
+                <thead>
                     <tr>
-                    <td>@patient.Name</td>
-                    <td>@patient.Email</td>
-                    <td>@patient.DateOfBirth</td>
-                    <td>@patient.Gender</td>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">DateOfBirth</th>
+                        <th scope="col">Gender</th>
                     </tr>
-                }
-            
-        </tbody>
-    </table>
-</div>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.PersonViewModel.PatientModel.Name</td>
+                        <td>@Model.PersonViewModel.PatientModel.Email</td>
+                        <td>@Model.PersonViewModel.PatientModel.DateOfBirth</td>
+                        <td>@Model.PersonViewModel.PatientModel.Gender</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        @if (Model.PersonViewModel.PatientModel.PatientDossier.Therapist != null)
+        {
+            <h2>Patienten dossier van @Model.PersonViewModel.PatientModel.Name</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>PlannedDate</th>
+                        <th>Therapist</th>
+                        <th>Diagnose code</th>
+
+                        <th>IntakeDoneBy</th>
+                        <th>IntakeSupervisedBy</th>
+                        <th>DueDate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.PlannedDate</td>
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.Therapist.Name</td>
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.DiagnosisCode</td>
+
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.IntakeDoneBy.Name</td>
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.IntakeSupervisedBy.Name</td>
+                        <td>@Model.PersonViewModel.PatientModel.PatientDossier.DueDate</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        @if (Model.PersonViewModel.PatientModel.PatientDossier.ExtraComments != null)
+        {
+            <h2>Extra opmerkingen</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Opmerking</th>
+                        <th>Aangemaakt op:</th>
+                        <th>Gemaakt door:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var comment in Model.PersonViewModel.PatientModel.PatientDossier.ExtraComments)
+                    {
+                        if (comment.CommentVisibleForPatient)
+                        {
+                            <tr>
+                                <td>@comment.Id</td>
+                                <td>@comment.Comment</td>
+                                <td>@comment.TimeOfCreation</td>
+                                <td>@comment.CommentMadeBy.Name</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+
+    @*    <form asp-action="AddDossier" asp-route-id="@Model.PersonViewModel.Id" method="post">
+        <div asp-validation-summary="All"></div>
+        <div class="form-group">
+            <label asp-for="@Model.PersonViewModel.PatientModel.DateOfBirth">Het probleem:</label>
+            <input class="form-control" asp-for="@Model.PatientModel.PatientDossier.IssueDescription" />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Client toevoegen</button>
+    </form>*@
+    }
+    else
+    {
+        <h1>Home overzicht</h1>
+    }
+
+
     
+
+</div>

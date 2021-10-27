@@ -1,0 +1,169 @@
+﻿@model AvansFysioOpdrachtIndividueel.Models.PatientDossierViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="patient-info">
+            <h1>@Model.PatientModel.Name's  overzicht:</h1>
+            <hr />
+            <ul class="list-group">
+                <li class="list-group-item">Email: @Model.PatientModel.Email</li>
+                <li class="list-group-item">Geboorte datum: @Model.PatientModel.DateOfBirth</li>
+                <li class="list-group-item">Geslacht: @Model.PatientModel.Gender</li>
+            </ul>
+        </div>
+    </div>
+    @if (Model.PatientModel.PatientDossier.Therapist != null)
+    {
+        <div class="row">
+            <div class="row patient-dossier col">
+                <h2>Patienten dossier van @Model.PatientModel.Name</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Geplande start datum</th>
+                            <th>Geplande einddatum</th>
+                            <th>Therapeut</th>
+                            <th>Diagnose code</th>
+                            <th>Intake gedaan door</th>
+                            <th>Intake bijgewoond door</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.PatientModel.PatientDossier.PlannedDate</td>
+                            <td>@Model.PatientModel.PatientDossier.DueDate</td>
+                            <td>@Model.PatientModel.PatientDossier.Therapist.Name</td>
+                            <td>@Model.PatientModel.PatientDossier.DiagnosisCode.CodeAndDescription</td>
+                            <td>@Model.PatientModel.PatientDossier.IntakeDoneBy.Name</td>
+                            <td>@Model.PatientModel.PatientDossier.IntakeSupervisedBy.Name</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="patient-treatmentplan col">
+                @if (Model.PatientModel.PatientDossier.TreatmentPlan != null)
+                {
+                    <h2>Behandelplan:</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item">-Maximaal @Model.PatientModel.PatientDossier.TreatmentPlan.AmountOfTreaments behandelingen per week.</li>
+                        <li class="list-group-item">-Maximaal @Model.PatientModel.PatientDossier.TreatmentPlan.TimeOfTreatment behandeltijd in minuten.</li>
+                    </ul>
+                }
+            </div>
+        </div>
+        <div class="row justify-content-between create-edit-buttons">
+            @if (@Model.PatientModel.PatientDossier != null)
+            {
+                <a class="col-3 btn btn-primary" asp-action="Edit" asp-controller="PatientDossierModels" asp-route-id="@Model.PatientModel.Id">Bewerk patientendossier.</a>
+                @if (@Model.PatientModel.PatientDossier.TreatmentPlan != null)
+                {
+                    <a class="col-3 btn btn-primary" asp-action="Edit" asp-controller="PatientTreatmentPlanModels" asp-route-id="@Model.PatientModel.Id">Bewerk dit behandelplan.</a>
+                }
+                else
+                {
+                    <a class="col-3 btn btn-primary" asp-action="Create" asp-controller="PatientTreatmentPlanModels" asp-route-id="@Model.PatientModel.Id">Maak een behandelplan aan.</a>
+                }
+            }
+        </div>
+        <div class="patient-treatments row">
+            @if (Model.PatientModel.PatientDossier.Treatments.Count > 0)
+            {
+                <h2>Behandelingen van @Model.PatientModel.Name</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Complicaties</th>
+                            <th>Bevind de behandeling in een behandelkamer?</th>
+                            <th>Behandeldatum</th>
+                            <th>Beschrijving</th>
+                            <th>VektisType</th>
+                            <th>Behandeling gedaan door</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var treatment in Model.PatientModel.PatientDossier.Treatments)
+                        {
+                            <tr>
+                                <td>@treatment.Complications</td>
+                                <td>@treatment.TreatmentRoomOrTrainingRoom</td>
+                                <td>@treatment.TreatmentTime</td>
+                                <td>@treatment.Description</td>
+                                <td>@treatment.VektisType.Value</td>
+                                <td>@treatment.TreatmentDoneBy.Name</td>
+                                <td><a asp-action="Delete" class="btn btn-primary" asp-controller="PatientTreatmentModels" asp-route-id="@Model.PatientModel.Id" asp-route-treatmentId="@treatment.Id">Verwijder behandeling </a> </td>
+                                <td><a asp-action="Edit" class="btn btn-primary" asp-controller="PatientTreatmentModels" asp-route-id="@Model.PatientModel.Id" asp-route-treatmentId="@treatment.Id">Bewerk behandeling</a> </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h2>Hier komen patient behandelingen</h2>
+            }
+
+        </div>
+        <div class="row">
+            <a class="btn btn-primary" asp-action="Create" asp-controller="PatientTreatmentModels" asp-route-id="@Model.PatientModel.Id">Voeg een treatment toe</a>
+        </div>
+        <div class="row extra-comments">
+            @if (Model.PatientModel.PatientDossier.ExtraComments != null)
+            {
+                <h2>Extra opmerkingen</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Opmerking</th>
+                            <th>Aangemaakt op:</th>
+                            <th>Gemaakt door:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var comment in Model.PatientModel.PatientDossier.ExtraComments)
+                        {
+                            <tr>
+                                <td>@comment.Id</td>
+                                <td>@comment.Comment</td>
+                                <td>@comment.TimeOfCreation</td>
+                                <td>@comment.CommentMadeBy.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h2>Hier komen extra opmerkingen</h2>
+            }
+
+            <form asp-action="AddComment" asp-route-id="@Model.PatientModel.Id" method="post">
+                <div asp-validation-summary="All"></div>
+                <div class="form-group">
+                    <label asp-for="@Model.Comment.Comment">Opmerking:</label>
+                    <input class="form-control" asp-for="@Model.Comment.Comment" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Comment.CommentVisibleForPatient">Moet de opmerking zichtbaar zijn voor de patient?:</label>
+                    <input class="form-control" asp-for="@Model.Comment.CommentVisibleForPatient" />
+                </div>
+                <button class="btn btn-primary" type="submit">Opmerking toevoegen</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <a class="col-3 btn btn-primary" asp-action="Edit" asp-controller="PatientDossierModels" asp-route-id="@Model.PatientModel.Id">Bewerk @Model.PatientModel.Name's dossier.</a>
+        </div>
+    }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.PatientModel.Id">Edit</a>
+    <a asp-action="Index">Back to List</a>
+</div>

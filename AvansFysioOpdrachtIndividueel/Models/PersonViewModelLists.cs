@@ -12,6 +12,7 @@ namespace AvansFysioOpdrachtIndividueel.Models
         public List<PatientModel> PatientModels { get; set; }
         public List<TeacherModel> TeacherModels {  get; set; }
 
+        public PersonViewModel PersonViewModel { get; set; }
         public PersonViewModelLists()
         {
 

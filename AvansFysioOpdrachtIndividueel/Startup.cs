@@ -8,8 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AvansFysioOpdrachtIndividueel.Data;
 using AvansFysioOpdrachtIndividueel.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Core.Data.Data;
+using Core.Domain.Domain;
+using Core.DomainServices;
+using Core.Data;
 
 namespace AvansFysioOpdrachtIndividueel
 {
@@ -17,8 +25,6 @@ namespace AvansFysioOpdrachtIndividueel
     {
         public Startup(IConfiguration configuration)
         {
-            LocalPatientRepo local = new LocalPatientRepo();
-            local.Create(new PatientModel(132131, new DateTime(2001, 8, 24), "Man", 1,"Maurice", "Mauricederidder@outlook.com"));
             Configuration = configuration;
         }
 
@@ -27,9 +33,50 @@ namespace AvansFysioOpdrachtIndividueel
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Standard stuff
             services.AddControllersWithViews();
-            services.AddScoped<IRepo<PatientModel>, LocalPatientRepo>();
-            services.AddScoped<IDao, SQLDao>();
+            // Dependency Injection
+            services.AddDbContext<FysioDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
+
+            services.AddScoped<IPatientRepo, SQLPatientRepo>();
+            services.AddScoped<ITherapistRepo,SQLTherapistRepo>();
+            services.AddScoped<IRepo<TreatmentModel>, SQLTreatmentRepo>();
+            services.AddScoped<IRepo<PersonModel>, SQLPersonRepo>();
+            services.AddScoped<ITreatmentManager, SQLTreatmentManager>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAsyncRepo<DiagnosisModel>, RestApiDiagnosisRepo>();
+            services.AddScoped<IVektisRepo, RestApiVektisRepo>();
+
+            // Authorization
+            services.AddDbContext<UserDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("User")));
+            services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth", config =>
+                {
+                    config.Cookie.Name = "Login.Cookie";
+                    config.LoginPath = "/Home/Authenticate";
+                });
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<UserDBContext>()
+                .AddDefaultTokenProviders();
+            services.AddAuthorization(config =>
+            {
+                var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                var defaultAuthPolicy = defaultAuthBuilder
+                .RequireAuthenticatedUser()
+                .Build();
+
+                config.AddPolicy("RequireFysiotherapistRole",
+                    policy => policy.RequireRole("Fysiotherapist", "Patient"));
+                config.AddPolicy("RequirePatientRole",
+                    policy => policy.RequireRole("Patient", "Fysiotherapist"));
+                config.DefaultPolicy = defaultAuthPolicy;
+            });
+            
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "Identity.Cookie";
+                config.LoginPath = "/Home/Login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +97,7 @@ namespace AvansFysioOpdrachtIndividueel
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

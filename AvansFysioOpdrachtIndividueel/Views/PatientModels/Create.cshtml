@@ -1,0 +1,49 @@
+﻿@model PatientModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Voeg een patient toe</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+                <div asp-validation-summary="All"></div>
+                <div class="form-group">
+                    <label asp-for="Name">Jouw naam:</label>
+                    <input class="form-control" asp-for="Name" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email">Jouw Email:</label>
+                    <input class="form-control" asp-for="Email" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateOfBirth">Jouw geboortedatum:</label>
+                    <input class="form-control" asp-for="DateOfBirth" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PatientNumber">Patientnummer::</label>
+                    <input class="form-control" asp-for="PatientNumber" />
+                </div>
+
+               <div class="form-group">
+                    <label asp-for="Gender">Geslacht:</label>
+                    <input class="form-control" asp-for="Gender" />
+                </div>
+
+                <button class="btn btn-primary" type="submit">Client toevoegen</button>
+            </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
